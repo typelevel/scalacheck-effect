@@ -1,14 +1,12 @@
 package org.scalacheck.effect
 
+import scala.collection.immutable.Stream
+
 import cats.MonadError
 import cats.implicits._
-import org.scalacheck.Arbitrary
-import org.scalacheck.Gen
-import org.scalacheck.Prop
-import org.scalacheck.Test
+import org.scalacheck.{Arbitrary, Gen, Prop, Shrink, Test}
 import org.scalacheck.rng.Seed
-import org.scalacheck.util.FreqMap
-import org.scalacheck.util.Pretty
+import org.scalacheck.util.{FreqMap, Pretty}
 
 sealed trait PropF[F[_]] {
   implicit val F: MonadError[F, Throwable]
@@ -161,10 +159,10 @@ object PropF {
   )(implicit
       toProp: P => PropF[F],
       F: MonadError[F, Throwable],
-      arbT1: Arbitrary[T1],
+      a1: Arbitrary[T1],
       pp1: T1 => Pretty
   ): PropF[F] =
-    forAllNoShrinkF(arbT1.arbitrary)(f)
+    forAllNoShrinkF(a1.arbitrary)(f)
 
   def forAllNoShrinkF[F[_], T1, T2, P](
       genT1: Gen[T1],
@@ -184,12 +182,12 @@ object PropF {
   )(implicit
       toProp: P => PropF[F],
       F: MonadError[F, Throwable],
-      arbT1: Arbitrary[T1],
+      a1: Arbitrary[T1],
       pp1: T1 => Pretty,
-      arbT2: Arbitrary[T2],
+      a2: Arbitrary[T2],
       pp2: T2 => Pretty
   ): PropF[F] =
-    forAllNoShrinkF(arbT1.arbitrary, arbT2.arbitrary)(f)
+    forAllNoShrinkF(a1.arbitrary, a2.arbitrary)(f)
 
   def forAllNoShrinkF[F[_], T1, T2, T3, P](
       genT1: Gen[T1],
@@ -211,14 +209,14 @@ object PropF {
   )(implicit
       toProp: P => PropF[F],
       F: MonadError[F, Throwable],
-      arbT1: Arbitrary[T1],
+      a1: Arbitrary[T1],
       pp1: T1 => Pretty,
-      arbT2: Arbitrary[T2],
+      a2: Arbitrary[T2],
       pp2: T2 => Pretty,
-      arbT3: Arbitrary[T3],
+      a3: Arbitrary[T3],
       pp3: T3 => Pretty
   ): PropF[F] =
-    forAllNoShrinkF(arbT1.arbitrary, arbT2.arbitrary, arbT3.arbitrary)(f)
+    forAllNoShrinkF(a1.arbitrary, a2.arbitrary, a3.arbitrary)(f)
 
   def forAllNoShrinkF[F[_], T1, T2, T3, T4, P](
       genT1: Gen[T1],
@@ -242,16 +240,16 @@ object PropF {
   )(implicit
       toProp: P => PropF[F],
       F: MonadError[F, Throwable],
-      arbT1: Arbitrary[T1],
+      a1: Arbitrary[T1],
       pp1: T1 => Pretty,
-      arbT2: Arbitrary[T2],
+      a2: Arbitrary[T2],
       pp2: T2 => Pretty,
-      arbT3: Arbitrary[T3],
+      a3: Arbitrary[T3],
       pp3: T3 => Pretty,
-      arbT4: Arbitrary[T4],
+      a4: Arbitrary[T4],
       pp4: T4 => Pretty
   ): PropF[F] =
-    forAllNoShrinkF(arbT1.arbitrary, arbT2.arbitrary, arbT3.arbitrary, arbT4.arbitrary)(f)
+    forAllNoShrinkF(a1.arbitrary, a2.arbitrary, a3.arbitrary, a4.arbitrary)(f)
 
   def forAllNoShrinkF[F[_], T1, T2, T3, T4, T5, P](
       genT1: Gen[T1],
@@ -277,23 +275,23 @@ object PropF {
   )(implicit
       toProp: P => PropF[F],
       F: MonadError[F, Throwable],
-      arbT1: Arbitrary[T1],
+      a1: Arbitrary[T1],
       pp1: T1 => Pretty,
-      arbT2: Arbitrary[T2],
+      a2: Arbitrary[T2],
       pp2: T2 => Pretty,
-      arbT3: Arbitrary[T3],
+      a3: Arbitrary[T3],
       pp3: T3 => Pretty,
-      arbT4: Arbitrary[T4],
+      a4: Arbitrary[T4],
       pp4: T4 => Pretty,
-      arbT5: Arbitrary[T5],
+      a5: Arbitrary[T5],
       pp5: T5 => Pretty
   ): PropF[F] =
     forAllNoShrinkF(
-      arbT1.arbitrary,
-      arbT2.arbitrary,
-      arbT3.arbitrary,
-      arbT4.arbitrary,
-      arbT5.arbitrary
+      a1.arbitrary,
+      a2.arbitrary,
+      a3.arbitrary,
+      a4.arbitrary,
+      a5.arbitrary
     )(f)
 
   def forAllNoShrinkF[F[_], T1, T2, T3, T4, T5, T6, P](
@@ -324,26 +322,26 @@ object PropF {
   )(implicit
       toProp: P => PropF[F],
       F: MonadError[F, Throwable],
-      arbT1: Arbitrary[T1],
+      a1: Arbitrary[T1],
       pp1: T1 => Pretty,
-      arbT2: Arbitrary[T2],
+      a2: Arbitrary[T2],
       pp2: T2 => Pretty,
-      arbT3: Arbitrary[T3],
+      a3: Arbitrary[T3],
       pp3: T3 => Pretty,
-      arbT4: Arbitrary[T4],
+      a4: Arbitrary[T4],
       pp4: T4 => Pretty,
-      arbT5: Arbitrary[T5],
+      a5: Arbitrary[T5],
       pp5: T5 => Pretty,
-      arbT6: Arbitrary[T6],
+      a6: Arbitrary[T6],
       pp6: T6 => Pretty
   ): PropF[F] =
     forAllNoShrinkF(
-      arbT1.arbitrary,
-      arbT2.arbitrary,
-      arbT3.arbitrary,
-      arbT4.arbitrary,
-      arbT5.arbitrary,
-      arbT6.arbitrary
+      a1.arbitrary,
+      a2.arbitrary,
+      a3.arbitrary,
+      a4.arbitrary,
+      a5.arbitrary,
+      a6.arbitrary
     )(f)
 
   def forAllNoShrinkF[F[_], T1, T2, T3, T4, T5, T6, T7, P](
@@ -376,29 +374,29 @@ object PropF {
   )(implicit
       toProp: P => PropF[F],
       F: MonadError[F, Throwable],
-      arbT1: Arbitrary[T1],
+      a1: Arbitrary[T1],
       pp1: T1 => Pretty,
-      arbT2: Arbitrary[T2],
+      a2: Arbitrary[T2],
       pp2: T2 => Pretty,
-      arbT3: Arbitrary[T3],
+      a3: Arbitrary[T3],
       pp3: T3 => Pretty,
-      arbT4: Arbitrary[T4],
+      a4: Arbitrary[T4],
       pp4: T4 => Pretty,
-      arbT5: Arbitrary[T5],
+      a5: Arbitrary[T5],
       pp5: T5 => Pretty,
-      arbT6: Arbitrary[T6],
+      a6: Arbitrary[T6],
       pp6: T6 => Pretty,
-      arbT7: Arbitrary[T7],
+      a7: Arbitrary[T7],
       pp7: T7 => Pretty
   ): PropF[F] =
     forAllNoShrinkF(
-      arbT1.arbitrary,
-      arbT2.arbitrary,
-      arbT3.arbitrary,
-      arbT4.arbitrary,
-      arbT5.arbitrary,
-      arbT6.arbitrary,
-      arbT7.arbitrary
+      a1.arbitrary,
+      a2.arbitrary,
+      a3.arbitrary,
+      a4.arbitrary,
+      a5.arbitrary,
+      a6.arbitrary,
+      a7.arbitrary
     )(f)
 
   def forAllNoShrinkF[F[_], T1, T2, T3, T4, T5, T6, T7, T8, P](
@@ -433,31 +431,378 @@ object PropF {
   )(implicit
       toProp: P => PropF[F],
       F: MonadError[F, Throwable],
-      arbT1: Arbitrary[T1],
+      a1: Arbitrary[T1],
       pp1: T1 => Pretty,
-      arbT2: Arbitrary[T2],
+      a2: Arbitrary[T2],
       pp2: T2 => Pretty,
-      arbT3: Arbitrary[T3],
+      a3: Arbitrary[T3],
       pp3: T3 => Pretty,
-      arbT4: Arbitrary[T4],
+      a4: Arbitrary[T4],
       pp4: T4 => Pretty,
-      arbT5: Arbitrary[T5],
+      a5: Arbitrary[T5],
       pp5: T5 => Pretty,
-      arbT6: Arbitrary[T6],
+      a6: Arbitrary[T6],
       pp6: T6 => Pretty,
-      arbT7: Arbitrary[T7],
+      a7: Arbitrary[T7],
       pp7: T7 => Pretty,
-      arbT8: Arbitrary[T8],
+      a8: Arbitrary[T8],
       pp8: T8 => Pretty
   ): PropF[F] =
     forAllNoShrinkF(
-      arbT1.arbitrary,
-      arbT2.arbitrary,
-      arbT3.arbitrary,
-      arbT4.arbitrary,
-      arbT5.arbitrary,
-      arbT6.arbitrary,
-      arbT7.arbitrary,
-      arbT8.arbitrary
+      a1.arbitrary,
+      a2.arbitrary,
+      a3.arbitrary,
+      a4.arbitrary,
+      a5.arbitrary,
+      a6.arbitrary,
+      a7.arbitrary,
+      a8.arbitrary
     )(f)
+
+  def forAllShrinkF[F[_], T, P](
+      gen: Gen[T],
+      shrink: T => Stream[T]
+  )(
+      f: T => P
+  )(implicit
+      toProp: P => PropF[F],
+      F: MonadError[F, Throwable],
+      pp1: T => Pretty
+  ): PropF[F] = ???
+
+  def forAllF[F[_], T1, P](
+      g1: Gen[T1]
+  )(
+      f: T1 => P
+  )(implicit
+      toProp: P => PropF[F],
+      F: MonadError[F, Throwable],
+      s1: Shrink[T1],
+      pp1: T1 => Pretty
+  ): PropF[F] = forAllShrinkF(g1, s1.shrink)(f)
+
+  def forAllF[F[_], T1, T2, P](
+      g1: Gen[T1],
+      g2: Gen[T2]
+  )(
+      f: (T1, T2) => P
+  )(implicit
+      toProp: P => PropF[F],
+      F: MonadError[F, Throwable],
+      s1: Shrink[T1],
+      pp1: T1 => Pretty,
+      s2: Shrink[T2],
+      pp2: T2 => Pretty
+  ): PropF[F] = forAllF(g1)(t1 => forAllF(g2)(f(t1, _)))
+
+  def forAllF[F[_], T1, T2, T3, P](
+      g1: Gen[T1],
+      g2: Gen[T2],
+      g3: Gen[T3]
+  )(
+      f: (T1, T2, T3) => P
+  )(implicit
+      toProp: P => PropF[F],
+      F: MonadError[F, Throwable],
+      s1: Shrink[T1],
+      pp1: T1 => Pretty,
+      s2: Shrink[T2],
+      pp2: T2 => Pretty,
+      s3: Shrink[T3],
+      pp3: T3 => Pretty
+  ): PropF[F] = forAllF(g1)(t1 => forAllF(g2, g3)(f(t1, _, _)))
+
+  def forAllF[F[_], T1, T2, T3, T4, P](
+      g1: Gen[T1],
+      g2: Gen[T2],
+      g3: Gen[T3],
+      g4: Gen[T4]
+  )(
+      f: (T1, T2, T3, T4) => P
+  )(implicit
+      toProp: P => PropF[F],
+      F: MonadError[F, Throwable],
+      s1: Shrink[T1],
+      pp1: T1 => Pretty,
+      s2: Shrink[T2],
+      pp2: T2 => Pretty,
+      s3: Shrink[T3],
+      pp3: T3 => Pretty,
+      s4: Shrink[T4],
+      pp4: T4 => Pretty
+  ): PropF[F] = forAllF(g1)(t1 => forAllF(g2, g3, g4)(f(t1, _, _, _)))
+
+  def forAllF[F[_], T1, T2, T3, T4, T5, P](
+      g1: Gen[T1],
+      g2: Gen[T2],
+      g3: Gen[T3],
+      g4: Gen[T4],
+      g5: Gen[T5]
+  )(
+      f: (T1, T2, T3, T4, T5) => P
+  )(implicit
+      toProp: P => PropF[F],
+      F: MonadError[F, Throwable],
+      s1: Shrink[T1],
+      pp1: T1 => Pretty,
+      s2: Shrink[T2],
+      pp2: T2 => Pretty,
+      s3: Shrink[T3],
+      pp3: T3 => Pretty,
+      s4: Shrink[T4],
+      pp4: T4 => Pretty,
+      s5: Shrink[T5],
+      pp5: T5 => Pretty
+  ): PropF[F] = forAllF(g1)(t1 => forAllF(g2, g3, g4, g5)(f(t1, _, _, _, _)))
+
+  def forAllF[F[_], T1, T2, T3, T4, T5, T6, P](
+      g1: Gen[T1],
+      g2: Gen[T2],
+      g3: Gen[T3],
+      g4: Gen[T4],
+      g5: Gen[T5],
+      g6: Gen[T6]
+  )(
+      f: (T1, T2, T3, T4, T5, T6) => P
+  )(implicit
+      toProp: P => PropF[F],
+      F: MonadError[F, Throwable],
+      s1: Shrink[T1],
+      pp1: T1 => Pretty,
+      s2: Shrink[T2],
+      pp2: T2 => Pretty,
+      s3: Shrink[T3],
+      pp3: T3 => Pretty,
+      s4: Shrink[T4],
+      pp4: T4 => Pretty,
+      s5: Shrink[T5],
+      pp5: T5 => Pretty,
+      s6: Shrink[T6],
+      pp6: T6 => Pretty
+  ): PropF[F] = forAllF(g1)(t1 => forAllF(g2, g3, g4, g5, g6)(f(t1, _, _, _, _, _)))
+
+  def forAllF[F[_], T1, T2, T3, T4, T5, T6, T7, P](
+      g1: Gen[T1],
+      g2: Gen[T2],
+      g3: Gen[T3],
+      g4: Gen[T4],
+      g5: Gen[T5],
+      g6: Gen[T6],
+      g7: Gen[T7]
+  )(
+      f: (T1, T2, T3, T4, T5, T6, T7) => P
+  )(implicit
+      toProp: P => PropF[F],
+      F: MonadError[F, Throwable],
+      s1: Shrink[T1],
+      pp1: T1 => Pretty,
+      s2: Shrink[T2],
+      pp2: T2 => Pretty,
+      s3: Shrink[T3],
+      pp3: T3 => Pretty,
+      s4: Shrink[T4],
+      pp4: T4 => Pretty,
+      s5: Shrink[T5],
+      pp5: T5 => Pretty,
+      s6: Shrink[T6],
+      pp6: T6 => Pretty,
+      s7: Shrink[T7],
+      pp7: T7 => Pretty
+  ): PropF[F] = forAllF(g1)(t1 => forAllF(g2, g3, g4, g5, g6, g7)(f(t1, _, _, _, _, _, _)))
+
+  def forAllF[F[_], T1, T2, T3, T4, T5, T6, T7, T8, P](
+      g1: Gen[T1],
+      g2: Gen[T2],
+      g3: Gen[T3],
+      g4: Gen[T4],
+      g5: Gen[T5],
+      g6: Gen[T6],
+      g7: Gen[T7],
+      g8: Gen[T8]
+  )(
+      f: (T1, T2, T3, T4, T5, T6, T7, T8) => P
+  )(implicit
+      toProp: P => PropF[F],
+      F: MonadError[F, Throwable],
+      s1: Shrink[T1],
+      pp1: T1 => Pretty,
+      s2: Shrink[T2],
+      pp2: T2 => Pretty,
+      s3: Shrink[T3],
+      pp3: T3 => Pretty,
+      s4: Shrink[T4],
+      pp4: T4 => Pretty,
+      s5: Shrink[T5],
+      pp5: T5 => Pretty,
+      s6: Shrink[T6],
+      pp6: T6 => Pretty,
+      s7: Shrink[T7],
+      pp7: T7 => Pretty,
+      s8: Shrink[T8],
+      pp8: T8 => Pretty
+  ): PropF[F] = forAllF(g1)(t1 => forAllF(g2, g3, g4, g5, g6, g7, g8)(f(t1, _, _, _, _, _, _, _)))
+
+  def forAllF[F[_], T1, P](
+      f: T1 => P
+  )(implicit
+      toProp: P => PropF[F],
+      F: MonadError[F, Throwable],
+      a1: Arbitrary[T1],
+      s1: Shrink[T1],
+      pp1: T1 => Pretty
+  ): PropF[F] = forAllShrinkF(a1.arbitrary, s1.shrink)(f)
+
+  def forAllF[F[_], T1, T2, P](
+      f: (T1, T2) => P
+  )(implicit
+      toProp: P => PropF[F],
+      F: MonadError[F, Throwable],
+      a1: Arbitrary[T1],
+      s1: Shrink[T1],
+      pp1: T1 => Pretty,
+      a2: Arbitrary[T2],
+      s2: Shrink[T2],
+      pp2: T2 => Pretty
+  ): PropF[F] = forAllF((t1: T1) => forAllF(f(t1, _)))
+
+  def forAllF[F[_], T1, T2, T3, P](
+      f: (T1, T2, T3) => P
+  )(implicit
+      toProp: P => PropF[F],
+      F: MonadError[F, Throwable],
+      a1: Arbitrary[T1],
+      s1: Shrink[T1],
+      pp1: T1 => Pretty,
+      a2: Arbitrary[T2],
+      s2: Shrink[T2],
+      pp2: T2 => Pretty,
+      a3: Arbitrary[T3],
+      s3: Shrink[T3],
+      pp3: T3 => Pretty
+  ): PropF[F] = forAllF((t1: T1) => forAllF(f(t1, _, _)))
+
+  def forAllF[F[_], T1, T2, T3, T4, P](
+      f: (T1, T2, T3, T4) => P
+  )(implicit
+      toProp: P => PropF[F],
+      F: MonadError[F, Throwable],
+      a1: Arbitrary[T1],
+      s1: Shrink[T1],
+      pp1: T1 => Pretty,
+      a2: Arbitrary[T2],
+      s2: Shrink[T2],
+      pp2: T2 => Pretty,
+      a3: Arbitrary[T3],
+      s3: Shrink[T3],
+      pp3: T3 => Pretty,
+      a4: Arbitrary[T4],
+      s4: Shrink[T4],
+      pp4: T4 => Pretty
+  ): PropF[F] = forAllF((t1: T1) => forAllF(f(t1, _, _, _)))
+
+  def forAllF[F[_], T1, T2, T3, T4, T5, P](
+      f: (T1, T2, T3, T4, T5) => P
+  )(implicit
+      toProp: P => PropF[F],
+      F: MonadError[F, Throwable],
+      a1: Arbitrary[T1],
+      s1: Shrink[T1],
+      pp1: T1 => Pretty,
+      a2: Arbitrary[T2],
+      s2: Shrink[T2],
+      pp2: T2 => Pretty,
+      a3: Arbitrary[T3],
+      s3: Shrink[T3],
+      pp3: T3 => Pretty,
+      a4: Arbitrary[T4],
+      s4: Shrink[T4],
+      pp4: T4 => Pretty,
+      a5: Arbitrary[T5],
+      s5: Shrink[T5],
+      pp5: T5 => Pretty
+  ): PropF[F] = forAllF((t1: T1) => forAllF(f(t1, _, _, _, _)))
+
+  def forAllF[F[_], T1, T2, T3, T4, T5, T6, P](
+      f: (T1, T2, T3, T4, T5, T6) => P
+  )(implicit
+      toProp: P => PropF[F],
+      F: MonadError[F, Throwable],
+      a1: Arbitrary[T1],
+      s1: Shrink[T1],
+      pp1: T1 => Pretty,
+      a2: Arbitrary[T2],
+      s2: Shrink[T2],
+      pp2: T2 => Pretty,
+      a3: Arbitrary[T3],
+      s3: Shrink[T3],
+      pp3: T3 => Pretty,
+      a4: Arbitrary[T4],
+      s4: Shrink[T4],
+      pp4: T4 => Pretty,
+      a5: Arbitrary[T5],
+      s5: Shrink[T5],
+      pp5: T5 => Pretty,
+      a6: Arbitrary[T6],
+      s6: Shrink[T6],
+      pp6: T6 => Pretty
+  ): PropF[F] = forAllF((t1: T1) => forAllF(f(t1, _, _, _, _, _)))
+
+  def forAllF[F[_], T1, T2, T3, T4, T5, T6, T7, P](
+      f: (T1, T2, T3, T4, T5, T6, T7) => P
+  )(implicit
+      toProp: P => PropF[F],
+      F: MonadError[F, Throwable],
+      a1: Arbitrary[T1],
+      s1: Shrink[T1],
+      pp1: T1 => Pretty,
+      a2: Arbitrary[T2],
+      s2: Shrink[T2],
+      pp2: T2 => Pretty,
+      a3: Arbitrary[T3],
+      s3: Shrink[T3],
+      pp3: T3 => Pretty,
+      a4: Arbitrary[T4],
+      s4: Shrink[T4],
+      pp4: T4 => Pretty,
+      a5: Arbitrary[T5],
+      s5: Shrink[T5],
+      pp5: T5 => Pretty,
+      a6: Arbitrary[T6],
+      s6: Shrink[T6],
+      pp6: T6 => Pretty,
+      a7: Arbitrary[T7],
+      s7: Shrink[T7],
+      pp7: T7 => Pretty
+  ): PropF[F] = forAllF((t1: T1) => forAllF(f(t1, _, _, _, _, _, _)))
+
+  def forAllF[F[_], T1, T2, T3, T4, T5, T6, T7, T8, P](
+      f: (T1, T2, T3, T4, T5, T6, T7, T8) => P
+  )(implicit
+      toProp: P => PropF[F],
+      F: MonadError[F, Throwable],
+      a1: Arbitrary[T1],
+      s1: Shrink[T1],
+      pp1: T1 => Pretty,
+      a2: Arbitrary[T2],
+      s2: Shrink[T2],
+      pp2: T2 => Pretty,
+      a3: Arbitrary[T3],
+      s3: Shrink[T3],
+      pp3: T3 => Pretty,
+      a4: Arbitrary[T4],
+      s4: Shrink[T4],
+      pp4: T4 => Pretty,
+      a5: Arbitrary[T5],
+      s5: Shrink[T5],
+      pp5: T5 => Pretty,
+      a6: Arbitrary[T6],
+      s6: Shrink[T6],
+      pp6: T6 => Pretty,
+      a7: Arbitrary[T7],
+      s7: Shrink[T7],
+      pp7: T7 => Pretty,
+      a8: Arbitrary[T8],
+      s8: Shrink[T8],
+      pp8: T8 => Pretty
+  ): PropF[F] = forAllF((t1: T1) => forAllF(f(t1, _, _, _, _, _, _, _)))
 }
