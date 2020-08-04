@@ -1,12 +1,14 @@
 package org.scalacheck.effect
 
-import scala.language.implicitConversions
-
 import cats.MonadError
 import cats.implicits._
-import org.scalacheck.{Arbitrary, Gen, Prop, Test}
+import org.scalacheck.Arbitrary
+import org.scalacheck.Gen
+import org.scalacheck.Prop
+import org.scalacheck.Test
 import org.scalacheck.rng.Seed
-import org.scalacheck.util.{FreqMap, Pretty}
+import org.scalacheck.util.FreqMap
+import org.scalacheck.util.Pretty
 
 sealed trait PropF[F[_]] {
   implicit val F: MonadError[F, Throwable]
@@ -124,22 +126,22 @@ object PropF {
         .handleError(t => Result[F](Prop.Exception(t), Nil, Set.empty, Set.empty))
     )
 
-  def forAllNoShrinkF[F[_], A, P](
-      genA: Gen[A]
+  def forAllNoShrinkF[F[_], T1, P](
+      genT1: Gen[T1]
   )(
-      f: A => P
+      f: T1 => P
   )(implicit
       toProp: P => PropF[F],
       F: MonadError[F, Throwable],
-      pp1: A => Pretty
+      pp1: T1 => Pretty
   ): PropF[F] =
     PropF[F] { (params, seed) =>
       try {
-        val r = genA.doPureApply(params, seed)
+        val r = genT1.doPureApply(params, seed)
         r.retrieve match {
-          case Some(a) =>
+          case Some(x) =>
             val labels = r.labels.mkString(",")
-            f(a).addArg(Prop.Arg(labels, a, 0, a, pp1(a), pp1(a))).provedToTrue
+            toProp(f(x)).addArg(Prop.Arg(labels, x, 0, x, pp1(x), pp1(x))).provedToTrue
           case None => PropF.undecided
         }
       } catch {
@@ -147,36 +149,41 @@ object PropF {
       }
     }
 
-  def forAllNoShrinkF[F[_], A, P](
-      f: A => P
+  def forAllNoShrinkF[F[_], T1, P](
+      f: T1 => P
   )(implicit
       toProp: P => PropF[F],
-      arbA: Arbitrary[A],
-      F: MonadError[F, Throwable]
+      F: MonadError[F, Throwable],
+      arbT1: Arbitrary[T1],
+      pp1: T1 => Pretty
   ): PropF[F] = {
-    forAllNoShrinkF(arbA.arbitrary)(f)
+    forAllNoShrinkF(arbT1.arbitrary)(f)
   }
 
-  def forAllNoShrinkF[F[_], A, B, P](
-      genA: Gen[A],
-      genB: Gen[B]
+  def forAllNoShrinkF[F[_], T1, T2, P](
+      genT1: Gen[T1],
+      genT2: Gen[T2]
   )(
-      f: (A, B) => P
+      f: (T1, T2) => P
   )(implicit
       toProp: P => PropF[F],
-      F: MonadError[F, Throwable]
+      F: MonadError[F, Throwable],
+      pp1: T1 => Pretty,
+      pp2: T2 => Pretty
   ): PropF[F] = {
-    forAllNoShrinkF(genA)(a => forAllNoShrinkF(genB)(b => f(a, b)))
+    forAllNoShrinkF(genT1)(t1 => forAllNoShrinkF(genT2)(t2 => f(t1, t2)))
   }
 
-  def forAllNoShrinkF[F[_], A, B, P](
-      f: (A, B) => P
+  def forAllNoShrinkF[F[_], T1, T2, P](
+      f: (T1, T2) => P
   )(implicit
       toProp: P => PropF[F],
-      arbA: Arbitrary[A],
-      arbB: Arbitrary[B],
-      F: MonadError[F, Throwable]
+      F: MonadError[F, Throwable],
+      arbT1: Arbitrary[T1],
+      pp1: T1 => Pretty,
+      arbT2: Arbitrary[T2],
+      pp2: T2 => Pretty
   ): PropF[F] = {
-    forAllNoShrinkF(arbA.arbitrary, arbB.arbitrary)(f)
+    forAllNoShrinkF(arbT1.arbitrary, arbT2.arbitrary)(f)
   }
 }

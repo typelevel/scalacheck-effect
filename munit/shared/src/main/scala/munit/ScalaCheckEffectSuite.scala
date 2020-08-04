@@ -29,8 +29,8 @@ trait ScalaCheckEffectSuite extends ScalaCheckSuite {
       t => {
         t.withBodyMap[TestValue](
           _.flatMap {
-            case p: PropF[_] =>
-              super.munitValueTransform(checkPropF(p)(t.location))
+            case p: PropF[f] =>
+              super.munitValueTransform(checkPropF[f](p)(t.location))
             case r => Future.successful(r)
           }(munitExecutionContext)
         )

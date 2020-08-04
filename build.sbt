@@ -6,9 +6,26 @@ val commonSettings = Seq(
 
   crossScalaVersions := List("2.12.11", "2.13.2", "0.25.0", "0.26.0-RC1"),
 
-  scalacOptions := List("-feature", "-language:higherKinds", "-Xlint:unused", "-Yrangepos"),
+  scalacOptions ++= List("-feature", "-language:higherKinds,implicitConversions") ++
+    (scalaBinaryVersion.value match {
+      case v if v.startsWith("2.13") => List("-Xlint", "-Yrangepos")
+      case v if v.startsWith("2.12") => Nil
+      case v if v.startsWith("0.") => Nil
+      case other => sys.error(s"Unsupported scala version: $other")
+    }),
 
-  addCompilerPlugin(scalafixSemanticdb),
+  libraryDependencies ++= {
+    if (isDotty.value) Nil
+    else Seq(scalafixSemanticdb)
+  },
+
+  crossScalaVersions := {
+    val default = crossScalaVersions.value
+    if (crossProjectPlatform.value.identifier != "jvm")
+      default.filter(_.startsWith("2."))
+    else
+      default
+  },
 
   scalafmtOnCompile := true
 )
