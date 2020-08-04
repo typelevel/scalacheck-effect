@@ -131,7 +131,7 @@ object PropF {
     )
 
   def forAllNoShrinkF[F[_], T1, P](
-      genT1: Gen[T1]
+      g1: Gen[T1]
   )(
       f: T1 => P
   )(implicit
@@ -142,7 +142,7 @@ object PropF {
     PropF[F] { params0 =>
       val (params, seed) = Prop.startSeed(params0)
       try {
-        val r = genT1.doPureApply(params, seed)
+        val r = g1.doPureApply(params, seed)
         r.retrieve match {
           case Some(x) =>
             val labels = r.labels.mkString(",")
@@ -165,8 +165,8 @@ object PropF {
     forAllNoShrinkF(a1.arbitrary)(f)
 
   def forAllNoShrinkF[F[_], T1, T2, P](
-      genT1: Gen[T1],
-      genT2: Gen[T2]
+      g1: Gen[T1],
+      g2: Gen[T2]
   )(
       f: (T1, T2) => P
   )(implicit
@@ -175,7 +175,7 @@ object PropF {
       pp1: T1 => Pretty,
       pp2: T2 => Pretty
   ): PropF[F] =
-    forAllNoShrinkF(genT1)(t1 => forAllNoShrinkF(genT2)(f(t1, _)))
+    forAllNoShrinkF(g1)(t1 => forAllNoShrinkF(g2)(f(t1, _)))
 
   def forAllNoShrinkF[F[_], T1, T2, P](
       f: (T1, T2) => P
@@ -190,9 +190,9 @@ object PropF {
     forAllNoShrinkF(a1.arbitrary, a2.arbitrary)(f)
 
   def forAllNoShrinkF[F[_], T1, T2, T3, P](
-      genT1: Gen[T1],
-      genT2: Gen[T2],
-      genT3: Gen[T3]
+      g1: Gen[T1],
+      g2: Gen[T2],
+      g3: Gen[T3]
   )(
       f: (T1, T2, T3) => P
   )(implicit
@@ -202,7 +202,7 @@ object PropF {
       pp2: T2 => Pretty,
       pp3: T3 => Pretty
   ): PropF[F] =
-    forAllNoShrinkF(genT1)(t1 => forAllNoShrinkF(genT2, genT3)(f(t1, _, _)))
+    forAllNoShrinkF(g1)(t1 => forAllNoShrinkF(g2, g3)(f(t1, _, _)))
 
   def forAllNoShrinkF[F[_], T1, T2, T3, P](
       f: (T1, T2, T3) => P
@@ -219,10 +219,10 @@ object PropF {
     forAllNoShrinkF(a1.arbitrary, a2.arbitrary, a3.arbitrary)(f)
 
   def forAllNoShrinkF[F[_], T1, T2, T3, T4, P](
-      genT1: Gen[T1],
-      genT2: Gen[T2],
-      genT3: Gen[T3],
-      genT4: Gen[T4]
+      g1: Gen[T1],
+      g2: Gen[T2],
+      g3: Gen[T3],
+      g4: Gen[T4]
   )(
       f: (T1, T2, T3, T4) => P
   )(implicit
@@ -233,7 +233,7 @@ object PropF {
       pp3: T3 => Pretty,
       pp4: T4 => Pretty
   ): PropF[F] =
-    forAllNoShrinkF(genT1)(t1 => forAllNoShrinkF(genT2, genT3, genT4)(f(t1, _, _, _)))
+    forAllNoShrinkF(g1)(t1 => forAllNoShrinkF(g2, g3, g4)(f(t1, _, _, _)))
 
   def forAllNoShrinkF[F[_], T1, T2, T3, T4, P](
       f: (T1, T2, T3, T4) => P
@@ -252,11 +252,11 @@ object PropF {
     forAllNoShrinkF(a1.arbitrary, a2.arbitrary, a3.arbitrary, a4.arbitrary)(f)
 
   def forAllNoShrinkF[F[_], T1, T2, T3, T4, T5, P](
-      genT1: Gen[T1],
-      genT2: Gen[T2],
-      genT3: Gen[T3],
-      genT4: Gen[T4],
-      genT5: Gen[T5]
+      g1: Gen[T1],
+      g2: Gen[T2],
+      g3: Gen[T3],
+      g4: Gen[T4],
+      g5: Gen[T5]
   )(
       f: (T1, T2, T3, T4, T5) => P
   )(implicit
@@ -268,7 +268,7 @@ object PropF {
       pp4: T4 => Pretty,
       pp5: T5 => Pretty
   ): PropF[F] =
-    forAllNoShrinkF(genT1)(t1 => forAllNoShrinkF(genT2, genT3, genT4, genT5)(f(t1, _, _, _, _)))
+    forAllNoShrinkF(g1)(t1 => forAllNoShrinkF(g2, g3, g4, g5)(f(t1, _, _, _, _)))
 
   def forAllNoShrinkF[F[_], T1, T2, T3, T4, T5, P](
       f: (T1, T2, T3, T4, T5) => P
@@ -295,12 +295,12 @@ object PropF {
     )(f)
 
   def forAllNoShrinkF[F[_], T1, T2, T3, T4, T5, T6, P](
-      genT1: Gen[T1],
-      genT2: Gen[T2],
-      genT3: Gen[T3],
-      genT4: Gen[T4],
-      genT5: Gen[T5],
-      genT6: Gen[T6]
+      g1: Gen[T1],
+      g2: Gen[T2],
+      g3: Gen[T3],
+      g4: Gen[T4],
+      g5: Gen[T5],
+      g6: Gen[T6]
   )(
       f: (T1, T2, T3, T4, T5, T6) => P
   )(implicit
@@ -313,9 +313,7 @@ object PropF {
       pp5: T5 => Pretty,
       pp6: T6 => Pretty
   ): PropF[F] =
-    forAllNoShrinkF(genT1)(t1 =>
-      forAllNoShrinkF(genT2, genT3, genT4, genT5, genT6)(f(t1, _, _, _, _, _))
-    )
+    forAllNoShrinkF(g1)(t1 => forAllNoShrinkF(g2, g3, g4, g5, g6)(f(t1, _, _, _, _, _)))
 
   def forAllNoShrinkF[F[_], T1, T2, T3, T4, T5, T6, P](
       f: (T1, T2, T3, T4, T5, T6) => P
@@ -345,13 +343,13 @@ object PropF {
     )(f)
 
   def forAllNoShrinkF[F[_], T1, T2, T3, T4, T5, T6, T7, P](
-      genT1: Gen[T1],
-      genT2: Gen[T2],
-      genT3: Gen[T3],
-      genT4: Gen[T4],
-      genT5: Gen[T5],
-      genT6: Gen[T6],
-      genT7: Gen[T7]
+      g1: Gen[T1],
+      g2: Gen[T2],
+      g3: Gen[T3],
+      g4: Gen[T4],
+      g5: Gen[T5],
+      g6: Gen[T6],
+      g7: Gen[T7]
   )(
       f: (T1, T2, T3, T4, T5, T6, T7) => P
   )(implicit
@@ -365,9 +363,7 @@ object PropF {
       pp6: T6 => Pretty,
       pp7: T7 => Pretty
   ): PropF[F] =
-    forAllNoShrinkF(genT1)(t1 =>
-      forAllNoShrinkF(genT2, genT3, genT4, genT5, genT6, genT7)(f(t1, _, _, _, _, _, _))
-    )
+    forAllNoShrinkF(g1)(t1 => forAllNoShrinkF(g2, g3, g4, g5, g6, g7)(f(t1, _, _, _, _, _, _)))
 
   def forAllNoShrinkF[F[_], T1, T2, T3, T4, T5, T6, T7, P](
       f: (T1, T2, T3, T4, T5, T6, T7) => P
@@ -400,14 +396,14 @@ object PropF {
     )(f)
 
   def forAllNoShrinkF[F[_], T1, T2, T3, T4, T5, T6, T7, T8, P](
-      genT1: Gen[T1],
-      genT2: Gen[T2],
-      genT3: Gen[T3],
-      genT4: Gen[T4],
-      genT5: Gen[T5],
-      genT6: Gen[T6],
-      genT7: Gen[T7],
-      genT8: Gen[T8]
+      g1: Gen[T1],
+      g2: Gen[T2],
+      g3: Gen[T3],
+      g4: Gen[T4],
+      g5: Gen[T5],
+      g6: Gen[T6],
+      g7: Gen[T7],
+      g8: Gen[T8]
   )(
       f: (T1, T2, T3, T4, T5, T6, T7, T8) => P
   )(implicit
@@ -422,8 +418,8 @@ object PropF {
       pp7: T7 => Pretty,
       pp8: T8 => Pretty
   ): PropF[F] =
-    forAllNoShrinkF(genT1)(t1 =>
-      forAllNoShrinkF(genT2, genT3, genT4, genT5, genT6, genT7, genT8)(f(t1, _, _, _, _, _, _, _))
+    forAllNoShrinkF(g1)(t1 =>
+      forAllNoShrinkF(g2, g3, g4, g5, g6, g7, g8)(f(t1, _, _, _, _, _, _, _))
     )
 
   def forAllNoShrinkF[F[_], T1, T2, T3, T4, T5, T6, T7, T8, P](
