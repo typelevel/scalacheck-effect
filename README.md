@@ -49,6 +49,7 @@ class ExampleSuite extends ScalaCheckEffectSuite with CatsEffectSuite {
 - Support effectful properties without blocking.
 - Compatibility with `Gen`/`Cogen`/`Arbitrary`.
 - Parity with `Prop` features, including shrinking.
+- Follow same style as ScalaCheck and use ScalaCheck reporting.
 - Integrate well with popular test frameworks.
 - Non-goal: provide direct support for checking effectful properties directly from SBT or from standalone app.
 
