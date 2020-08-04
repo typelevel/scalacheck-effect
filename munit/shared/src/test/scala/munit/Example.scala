@@ -12,7 +12,7 @@ class Example extends ScalaCheckEffectSuite {
     new ValueTransform("IO", { case e: IO[_] => e.unsafeToFuture() })
 
   test("one") {
-    PropF.forAllNoShrinkF { (a: Int) => IO(1) }
+    PropF.forAllNoShrinkF { (a: Int) => IO(assert(a == a)) }
   }
 
   test("two") {

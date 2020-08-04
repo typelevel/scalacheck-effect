@@ -118,11 +118,18 @@ object PropF {
       val F: MonadError[F, Throwable]
   ) extends PropF[F]
 
-  implicit def effectToPropF[F[_], A](
-      fa: F[A]
+  implicit def effectOfPropFToPropF[F[_]](
+      fa: F[PropF[F]]
   )(implicit F: MonadError[F, Throwable]): PropF[F] =
     Eval[F, Result[F]](
-      fa.as(Result[F](Prop.True, Nil, Set.empty, Set.empty): PropF[F])
+      fa.handleError(t => Result[F](Prop.Exception(t), Nil, Set.empty, Set.empty))
+    )
+
+  implicit def effectOfUnitToPropF[F[_]](
+      fu: F[Unit]
+  )(implicit F: MonadError[F, Throwable]): PropF[F] =
+    Eval[F, Result[F]](
+      fu.as(Result[F](Prop.True, Nil, Set.empty, Set.empty): PropF[F])
         .handleError(t => Result[F](Prop.Exception(t), Nil, Set.empty, Set.empty))
     )
 
