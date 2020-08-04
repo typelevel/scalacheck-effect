@@ -23,7 +23,7 @@ object Example extends IOApp {
 
 Running this program results in the output: `Result(Passed,100,0,Map(),0)`.
 
-This library provices the `org.scalacheck.effect.PropF` type, which is the effectul analog to `org.scalacheck.Prop`. In this example, we use `PropF.forAllNoShrinkF` to write a property of the shape `Int => IO[Unit]`. This example uses `cats.effect.IO` as the type constructor, but any effect `F[_]` with an instance of `MonadError[F, Throwable]` can be used, including `scala.concurrent.Future`.
+This library provides the `org.scalacheck.effect.PropF` type, which is the effectul analog to `org.scalacheck.Prop`. In this example, we use `PropF.forAllNoShrinkF` to write a property of the shape `Int => IO[Unit]`. This example uses `cats.effect.IO` as the type constructor, but any effect `F[_]` with an instance of `MonadError[F, Throwable]` can be used, including `scala.concurrent.Future`.
 
 ## MUnit Integration
 
