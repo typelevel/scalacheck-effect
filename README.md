@@ -21,6 +21,8 @@ object Example extends IOApp {
 }
 ```
 
+The key idea here is using the `PropF.forAll*F` methods to create `PropF[F]` instances. The `check()` method on `PropF` converts a `PropF[F]` to a `F[Test.Result]`.
+
 Running this program results in the output: `Result(Passed,100,0,Map(),0)`.
 
 This library provides the `org.scalacheck.effect.PropF` type, which is the effectul analog to `org.scalacheck.Prop`. In this example, we use `PropF.forAllNoShrinkF` to write a property of the shape `Int => IO[Unit]`. This example uses `cats.effect.IO` as the type constructor, but any effect `F[_]` with an instance of `MonadError[F, Throwable]` can be used, including `scala.concurrent.Future`.
