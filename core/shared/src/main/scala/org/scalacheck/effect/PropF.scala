@@ -23,7 +23,7 @@ sealed trait PropF[F[_]] {
   private def mapResult(f: PropF.Result[F] => PropF.Result[F]): PropF[F] =
     this match {
       case r: PropF.Result[F] => f(r)
-      case PropF.Cont(g)      => PropF.Cont((p, s) => g(p, s).mapResult(f))
+      case PropF.Cont(g)      => PropF.Cont(p => g(p).mapResult(f))
       case PropF.Eval(effect) => PropF.Eval(effect.map(_.mapResult(f)))
     }
 
@@ -36,8 +36,7 @@ sealed trait PropF[F[_]] {
           next.checkOne(Prop.slideSeed(params))
         }
       case PropF.Cont(next) =>
-        val (p, seed) = Prop.startSeed(params)
-        next(p, seed).checkOne(Prop.slideSeed(params))
+        next(params).checkOne(Prop.slideSeed(params))
     }
   }
 
@@ -94,10 +93,10 @@ sealed trait PropF[F[_]] {
 
 object PropF {
   def apply[F[_]](
-      f: (Gen.Parameters, Seed) => PropF[F]
+      f: Gen.Parameters => PropF[F]
   )(implicit F: MonadError[F, Throwable]): PropF[F] = Cont(f)
 
-  private[effect] case class Cont[F[_]](f: (Gen.Parameters, Seed) => PropF[F])(implicit
+  private[effect] case class Cont[F[_]](f: Gen.Parameters => PropF[F])(implicit
       val F: MonadError[F, Throwable]
   ) extends PropF[F]
 
@@ -140,7 +139,8 @@ object PropF {
       F: MonadError[F, Throwable],
       pp1: T1 => Pretty
   ): PropF[F] =
-    PropF[F] { (params, seed) =>
+    PropF[F] { params0 =>
+      val (params, seed) = Prop.startSeed(params0)
       try {
         val r = genT1.doPureApply(params, seed)
         r.retrieve match {
