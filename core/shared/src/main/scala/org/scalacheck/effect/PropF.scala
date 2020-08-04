@@ -1,12 +1,14 @@
 package org.scalacheck.effect
 
 import scala.collection.immutable.Stream
+import scala.collection.immutable.Stream.#::
 
 import cats.MonadError
 import cats.implicits._
 import org.scalacheck.{Arbitrary, Gen, Prop, Shrink, Test}
 import org.scalacheck.rng.Seed
 import org.scalacheck.util.{FreqMap, Pretty}
+import scala.collection.immutable.Stream.Cons
 
 sealed trait PropF[F[_]] {
   implicit val F: MonadError[F, Throwable]
@@ -109,7 +111,14 @@ object PropF {
       collected: Set[Any],
       labels: Set[String]
   )(implicit val F: MonadError[F, Throwable])
-      extends PropF[F]
+      extends PropF[F] {
+    def failure: Boolean =
+      status match {
+        case Prop.False        => true
+        case Prop.Exception(_) => true
+        case _                 => false
+      }
+  }
 
   private[effect] case class Eval[F[_], A](effect: F[PropF[F]])(implicit
       val F: MonadError[F, Throwable]
@@ -463,8 +472,69 @@ object PropF {
   )(implicit
       toProp: P => PropF[F],
       F: MonadError[F, Throwable],
-      pp1: T => Pretty
-  ): PropF[F] = ???
+      pp: T => Pretty
+  ): PropF[F] =
+    PropF[F] { prms0 =>
+      val (prms, seed) = Prop.startSeed(prms0)
+      val gr = gen.doApply(prms, seed)
+      val labels = gr.labels.mkString(",")
+
+      def result(x: T): F[Result[F]] =
+        toProp(f(x)).provedToTrue.checkOne(Prop.slideSeed(prms0))
+
+      def getFirstFailure(xs: Stream[T]): F[Either[(T, Result[F]), (T, Result[F])]] = {
+        assert(!xs.isEmpty, "Stream cannot be empty")
+        val results: Stream[(T, F[Result[F]])] = xs.map(x => (x, result(x)))
+        val (firstT, firstResF) = results.head
+        firstResF.flatMap { firstRes =>
+          def loop(
+              results: Stream[(T, F[Result[F]])]
+          ): F[Either[(T, Result[F]), (T, Result[F])]] = {
+            results match {
+              case hd #:: tl =>
+                hd._2.flatMap { r =>
+                  if (r.failure) F.pure(Left((hd._1, r)))
+                  else loop(tl)
+                }
+              case _ => F.pure(Right((firstT, firstRes)))
+            }
+          }
+          loop(results)
+        }
+      }
+
+      def shrinker(x: T, r: Result[F], shrinks: Int, orig: T): F[PropF[F]] = {
+        val xs = shrink(x).filter(gr.sieve)
+        val res = r.addArg(Prop.Arg(labels, x, shrinks, orig, pp(x), pp(orig)))
+        if (xs.isEmpty) F.pure(res)
+        else
+          getFirstFailure(xs).flatMap {
+            case Right((x2, r2)) => F.pure(res)
+            case Left((x2, r2))  => shrinker(x2, replOrig(r, r2), shrinks + 1, orig)
+          }
+      }
+
+      def replOrig(r0: Result[F], r1: Result[F]): Result[F] =
+        (r0.args, r1.args) match {
+          case (a0 :: _, a1 :: as) =>
+            r1.copy(
+              args = a1.copy(
+                origArg = a0.origArg,
+                prettyOrigArg = a0.prettyOrigArg
+              ) :: as
+            )
+          case _ => r1
+        }
+
+      gr.retrieve match {
+        case None => PropF.undecided
+        case Some(x) =>
+          Eval(result(x).flatMap { r =>
+            if (r.failure && prms.useLegacyShrinking) shrinker(x, r, 0, x)
+            else F.pure(r.addArg(Prop.Arg(labels, x, 0, x, pp(x), pp(x))))
+          })
+      }
+    }
 
   def forAllF[F[_], T1, P](
       g1: Gen[T1]

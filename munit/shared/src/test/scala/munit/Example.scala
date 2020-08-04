@@ -16,7 +16,7 @@ class Example extends ScalaCheckEffectSuite {
   }
 
   test("two") {
-    PropF.forAllNoShrinkF { (a: Int, b: Int) =>
+    PropF.forAllF { (a: Int, b: Int) =>
       IO { assertEquals(a + b, b + a) }
     }
   }

@@ -10,7 +10,7 @@ import cats.effect.{ExitCode, IO, IOApp}
 object Example extends IOApp {
   def run(args: List[String]): IO[ExitCode] = {
     val p: PropF[IO] = 
-      PropF.forAllNoShrinkF { (x: Int) =>
+      PropF.forAllF { (x: Int) =>
         IO(x).start.flatMap(_.join).map(res => assert(res == x))
       }
 
@@ -23,9 +23,9 @@ object Example extends IOApp {
 
 Running this program results in the output: `Result(Passed,100,0,Map(),0)`.
 
-This library provides the `org.scalacheck.effect.PropF` type, which is the effectul analog to `org.scalacheck.Prop`. In this example, we use `PropF.forAllNoShrinkF` to write a property of the shape `Int => IO[Unit]`. This example uses `cats.effect.IO` as the type constructor, but any effect `F[_]` with an instance of `MonadError[F, Throwable]` can be used, including `scala.concurrent.Future`.
+This library provides the `org.scalacheck.effect.PropF` type, which is the effectul analog to `org.scalacheck.Prop`. In this example, we use `PropF.forAllF` to write a property of the shape `Int => IO[Unit]`. This example uses `cats.effect.IO` as the type constructor, but any effect `F[_]` with an instance of `MonadError[F, Throwable]` can be used, including `scala.concurrent.Future`.
 
-The key idea here is using the `PropF.forAll*F` methods to create `PropF[F]` instances. The `check()` method on `PropF` converts a `PropF[F]` to a `F[Test.Result]`.
+The key idea here is using the `PropF.{forAllF, forAllNoShrinkF}` methods to create `PropF[F]` instances. The `check()` method on `PropF` converts a `PropF[F]` to a `F[Test.Result]`.
 
 ## MUnit Integration
 
@@ -39,7 +39,7 @@ import org.scalacheck.effect.PropF
 
 class ExampleSuite extends ScalaCheckEffectSuite with CatsEffectSuite {
   test("first PropF test") {
-    PropF.forAllNoShrinkF { (x: Int) =>
+    PropF.forAllF { (x: Int) =>
       IO(x).start.flatMap(_.join).map(res => assert(res == x))
     }
   }
