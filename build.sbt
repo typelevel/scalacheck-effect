@@ -9,6 +9,14 @@ githubWorkflowEnv in ThisBuild ++= Map(
   "SONATYPE_PASSWORD" -> s"$${{ secrets.SONATYPE_PASSWORD }}"
 )
 
+lazy val root = project.in(file("."))
+  .aggregate(core.jvm, core.js, munit.jvm, munit.js)
+  .settings(
+    publish := {},
+    publishLocal := {},
+    publishArtifact := false
+  )
+
 val commonSettings = Seq(
   organization := "org.typelevel",
   homepage := Some(url("https://github.com/typelevel/scalacheck-effect")),
