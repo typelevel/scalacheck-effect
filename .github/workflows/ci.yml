@@ -81,17 +81,17 @@ jobs:
       - name: Build project
         run: sbt ++${{ matrix.scala }} test
 
-      - name: Upload target directory 'munit/jvm/target' (${{ matrix.scala }})
-        uses: actions/upload-artifact@v1
-        with:
-          name: target-${{ matrix.os }}-${{ matrix.scala }}-${{ matrix.java }}-munit_jvm_target
-          path: munit/jvm/target
-
       - name: Upload target directory 'target' (${{ matrix.scala }})
         uses: actions/upload-artifact@v1
         with:
           name: target-${{ matrix.os }}-${{ matrix.scala }}-${{ matrix.java }}-target
           path: target
+
+      - name: Upload target directory 'munit/jvm/target' (${{ matrix.scala }})
+        uses: actions/upload-artifact@v1
+        with:
+          name: target-${{ matrix.os }}-${{ matrix.scala }}-${{ matrix.java }}-munit_jvm_target
+          path: munit/jvm/target
 
       - name: Upload target directory 'core/js/target' (${{ matrix.scala }})
         uses: actions/upload-artifact@v1
@@ -175,30 +175,6 @@ jobs:
           path: ~/.sbt
           key: ${{ runner.os }}-sbt-cache-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('project/build.properties') }}
 
-      - name: Download target directory 'munit/jvm/target' (2.12.11)
-        uses: actions/download-artifact@v1
-        with:
-          name: target-${{ matrix.os }}-2.12.11-${{ matrix.java }}-munit_jvm_target
-          path: munit/jvm/target
-
-      - name: Download target directory 'munit/jvm/target' (2.13.2)
-        uses: actions/download-artifact@v1
-        with:
-          name: target-${{ matrix.os }}-2.13.2-${{ matrix.java }}-munit_jvm_target
-          path: munit/jvm/target
-
-      - name: Download target directory 'munit/jvm/target' (0.25.0)
-        uses: actions/download-artifact@v1
-        with:
-          name: target-${{ matrix.os }}-0.25.0-${{ matrix.java }}-munit_jvm_target
-          path: munit/jvm/target
-
-      - name: Download target directory 'munit/jvm/target' (0.26.0-RC1)
-        uses: actions/download-artifact@v1
-        with:
-          name: target-${{ matrix.os }}-0.26.0-RC1-${{ matrix.java }}-munit_jvm_target
-          path: munit/jvm/target
-
       - name: Download target directory 'target' (2.12.11)
         uses: actions/download-artifact@v1
         with:
@@ -222,6 +198,30 @@ jobs:
         with:
           name: target-${{ matrix.os }}-0.26.0-RC1-${{ matrix.java }}-target
           path: target
+
+      - name: Download target directory 'munit/jvm/target' (2.12.11)
+        uses: actions/download-artifact@v1
+        with:
+          name: target-${{ matrix.os }}-2.12.11-${{ matrix.java }}-munit_jvm_target
+          path: munit/jvm/target
+
+      - name: Download target directory 'munit/jvm/target' (2.13.2)
+        uses: actions/download-artifact@v1
+        with:
+          name: target-${{ matrix.os }}-2.13.2-${{ matrix.java }}-munit_jvm_target
+          path: munit/jvm/target
+
+      - name: Download target directory 'munit/jvm/target' (0.25.0)
+        uses: actions/download-artifact@v1
+        with:
+          name: target-${{ matrix.os }}-0.25.0-${{ matrix.java }}-munit_jvm_target
+          path: munit/jvm/target
+
+      - name: Download target directory 'munit/jvm/target' (0.26.0-RC1)
+        uses: actions/download-artifact@v1
+        with:
+          name: target-${{ matrix.os }}-0.26.0-RC1-${{ matrix.java }}-munit_jvm_target
+          path: munit/jvm/target
 
       - name: Download target directory 'core/js/target' (2.12.11)
         uses: actions/download-artifact@v1
