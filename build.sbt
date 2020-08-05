@@ -9,7 +9,9 @@ githubWorkflowPublishTargetBranches in ThisBuild := Seq(
 )
 githubWorkflowEnv in ThisBuild ++= Map(
   "SONATYPE_USERNAME" -> s"$${{ secrets.SONATYPE_USERNAME }}",
-  "SONATYPE_PASSWORD" -> s"$${{ secrets.SONATYPE_PASSWORD }}"
+  "SONATYPE_PASSWORD" -> s"$${{ secrets.SONATYPE_PASSWORD }}",
+  "PGP_SECRET" -> s"$${{ secrets.PGP_SECRET }}",
+  "PGP_PASSPHRASE" -> s"$${{ secrets.PGP_PASSPHRASE }}"
 )
 githubWorkflowPublish in ThisBuild := Seq(WorkflowStep.Sbt(List("ci-release")))
 
