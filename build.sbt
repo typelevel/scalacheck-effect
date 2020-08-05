@@ -1,7 +1,13 @@
 import sbtcrossproject.CrossPlugin.autoImport.crossProject
 import sbtcrossproject.CrossPlugin.autoImport.CrossType
 
+crossScalaVersions in ThisBuild := List("2.12.11", "2.13.2", "0.25.0", "0.26.0-RC1")
+
 githubWorkflowPublishTargetBranches in ThisBuild := Seq(RefPredicate.Equals(Ref.Branch("main")))
+githubWorkflowEnv in ThisBuild ++= Map(
+  "SONATYPE_USERNAME" -> s"$${{ secrets.SONATYPE_USERNAME }}",
+  "SONATYPE_PASSWORD" -> s"$${{ secrets.SONATYPE_PASSWORD }}"
+)
 
 val commonSettings = Seq(
   organization := "org.typelevel",
@@ -15,8 +21,6 @@ val commonSettings = Seq(
       url("https://github.com/mpilquist")
     )
   ),
-
-  crossScalaVersions := List("2.12.11", "2.13.2", "0.25.0", "0.26.0-RC1"),
 
   scalacOptions ++= List("-feature", "-language:higherKinds,implicitConversions") ++
     (scalaBinaryVersion.value match {
