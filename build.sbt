@@ -3,11 +3,16 @@ import sbtcrossproject.CrossPlugin.autoImport.CrossType
 
 crossScalaVersions in ThisBuild := List("2.12.11", "2.13.2", "0.25.0", "0.26.0-RC1")
 
-githubWorkflowPublishTargetBranches in ThisBuild := Seq(RefPredicate.Equals(Ref.Branch("main")))
+githubWorkflowPublishTargetBranches in ThisBuild := Seq(
+  RefPredicate.Equals(Ref.Branch("main")),
+  RefPredicate.StartsWith(Ref.Tag("v"))
+)
 githubWorkflowEnv in ThisBuild ++= Map(
   "SONATYPE_USERNAME" -> s"$${{ secrets.SONATYPE_USERNAME }}",
   "SONATYPE_PASSWORD" -> s"$${{ secrets.SONATYPE_PASSWORD }}"
 )
+githubWorkflowPublish in ThisBuild := Seq(WorkflowStep.Sbt(List("ci-release")))
+
 
 lazy val root = project.in(file("."))
   .aggregate(core.jvm, core.js, munit.jvm, munit.js)
