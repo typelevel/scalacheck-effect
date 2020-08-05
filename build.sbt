@@ -75,4 +75,6 @@ lazy val munit = crossProject(JSPlatform, JVMPlatform).settings(commonSettings).
   ),
 
   testFrameworks += new TestFramework("munit.Framework")
+).jsSettings(
+  scalaJSLinkerConfig ~= (_.withModuleKind(ModuleKind.CommonJSModule))
 ).dependsOn(core)
