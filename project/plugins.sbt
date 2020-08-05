@@ -8,3 +8,5 @@ addSbtPlugin("com.codecommit" % "sbt-github-actions" % "0.8.0")
 addSbtPlugin("ch.epfl.lamp" % "sbt-dotty" % "0.4.1")
 addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.3.2")
 addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % "0.9.19")
+addSbtPlugin("com.geirsson" % "sbt-ci-release" % "1.5.3")
+

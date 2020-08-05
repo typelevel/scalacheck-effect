@@ -1,8 +1,20 @@
 import sbtcrossproject.CrossPlugin.autoImport.crossProject
 import sbtcrossproject.CrossPlugin.autoImport.CrossType
 
+githubWorkflowPublishTargetBranches in ThisBuild := Seq(RefPredicate.Equals(Ref.Branch("main")))
+
 val commonSettings = Seq(
   organization := "org.typelevel",
+  homepage := Some(url("https://github.com/typelevel/scalacheck-effect")),
+  licenses := List("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
+  developers := List(
+    Developer(
+      "mpilquist",
+      "Michael Pilquist",
+      "mpilquist@gmail.com",
+      url("https://github.com/mpilquist")
+    )
+  ),
 
   crossScalaVersions := List("2.12.11", "2.13.2", "0.25.0", "0.26.0-RC1"),
 
@@ -27,7 +39,22 @@ val commonSettings = Seq(
       default
   },
 
-  scalafmtOnCompile := true
+  scalafmtOnCompile := true,
+
+  Compile / doc / sources := {
+    val old = (Compile / doc / sources).value
+    if (isDotty.value)
+      Seq()
+    else
+      old
+  },
+  Test / doc / sources := {
+    val old = (Test / doc / sources).value
+    if (isDotty.value)
+      Seq()
+    else
+      old
+  }
 )
 
 lazy val core = crossProject(JSPlatform, JVMPlatform).settings(commonSettings).settings(
