@@ -10,17 +10,23 @@ import org.scalacheck.rng.Seed
 import org.scalacheck.util.{FreqMap, Pretty}
 import scala.collection.immutable.Stream.Cons
 
+/**
+  * An effectful property.
+  *
+  * Effectful properties are ones in which each sample evaluates in a type constructor.
+  * That is, instead of directly computing a result from a single sample of generated values,
+  * the result is computed in some effect `F[_]` -- e.g., `cats.effect.IO` or `scala.concurrent.Future`.
+  * A property which computes in an effect `F[_]` has the type `PropF[F]`.
+  *
+  * `PropF[F]` instances can be constructed for any effect which has a `MonadError[F, Throwable]` instance.
+  *
+  * The most common way to construct `PropF[F]` values is by using one of the `forAllF` methods on
+  * the `PropF` companion. These are analogous to `Prop.forAll` from ScalaCheck. When computing
+  * the result of a single sample, `F[Unit]` values are treated as successes and any exceptions thrown
+  * are treated as falsifications.
+  */
 sealed trait PropF[F[_]] {
   implicit val F: MonadError[F, Throwable]
-
-  private[effect] def addArg(arg: Prop.Arg[Any]): PropF[F] =
-    map(r => r.copy(args = arg :: r.args))
-
-  private[effect] def provedToTrue: PropF[F] =
-    map { r =>
-      if (r.status == Prop.Proof) r.copy(status = Prop.True)
-      else r
-    }
 
   def map(f: PropF.Result[F] => PropF.Result[F]): PropF[F] =
     this match {
@@ -36,7 +42,8 @@ sealed trait PropF[F[_]] {
       case PropF.Suspend(effect)  => PropF.Suspend(effect.map(_.flatMap(f)))
     }
 
-  private def checkOne(params: Gen.Parameters): F[PropF.Result[F]] = {
+  /** Checks a single sample. */
+  def checkOne(params: Gen.Parameters = Gen.Parameters.default): F[PropF.Result[F]] = {
     this match {
       case r: PropF.Result[F] =>
         F.pure(r)
@@ -49,6 +56,7 @@ sealed trait PropF[F[_]] {
     }
   }
 
+  /** Checks this property. */
   def check(
       testParams: Test.Parameters = Test.Parameters.default,
       genParams: Gen.Parameters = Gen.Parameters.default
@@ -98,6 +106,15 @@ sealed trait PropF[F[_]] {
 
     loop(genParams, 0, 0)
   }
+
+  private[effect] def addArg(arg: Prop.Arg[Any]): PropF[F] =
+    map(r => r.copy(args = arg :: r.args))
+
+  private[effect] def provedToTrue: PropF[F] =
+    map { r =>
+      if (r.status == Prop.Proof) r.copy(status = Prop.True)
+      else r
+    }
 }
 
 object PropF {
