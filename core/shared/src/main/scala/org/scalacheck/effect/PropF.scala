@@ -24,20 +24,20 @@ sealed trait PropF[F[_]] {
 
   private def mapResult(f: PropF.Result[F] => PropF.Result[F]): PropF[F] =
     this match {
-      case r: PropF.Result[F] => f(r)
-      case PropF.Cont(g)      => PropF.Cont(p => g(p).mapResult(f))
-      case PropF.Eval(effect) => PropF.Eval(effect.map(_.mapResult(f)))
+      case r: PropF.Result[F]     => f(r)
+      case PropF.Parameterized(g) => PropF.Parameterized(p => g(p).mapResult(f))
+      case PropF.Suspend(effect)  => PropF.Suspend(effect.map(_.mapResult(f)))
     }
 
   private def checkOne(params: Gen.Parameters): F[PropF.Result[F]] = {
     this match {
       case r: PropF.Result[F] =>
         F.pure(r)
-      case PropF.Eval(fa) =>
+      case PropF.Suspend(fa) =>
         fa.flatMap { next =>
           next.checkOne(Prop.slideSeed(params))
         }
-      case PropF.Cont(next) =>
+      case PropF.Parameterized(next) =>
         next(params).checkOne(Prop.slideSeed(params))
     }
   }
@@ -96,14 +96,15 @@ sealed trait PropF[F[_]] {
 object PropF {
   def apply[F[_]](
       f: Gen.Parameters => PropF[F]
-  )(implicit F: MonadError[F, Throwable]): PropF[F] = Cont(f)
+  )(implicit F: MonadError[F, Throwable]): PropF[F] = Parameterized(f)
 
-  private[effect] case class Cont[F[_]](f: Gen.Parameters => PropF[F])(implicit
+  def apply[F[_]](
+      b: Boolean
+  )(implicit F: MonadError[F, Throwable]): PropF[F] = if (b) passed else falsified
+
+  private[effect] case class Parameterized[F[_]](f: Gen.Parameters => PropF[F])(implicit
       val F: MonadError[F, Throwable]
   ) extends PropF[F]
-
-  private[effect] def undecided[F[_]](implicit F: MonadError[F, Throwable]): PropF[F] =
-    Result(Prop.Undecided, Nil, Set.empty, Set.empty)
 
   private[effect] case class Result[F[_]](
       status: Prop.Status,
@@ -120,21 +121,39 @@ object PropF {
       }
   }
 
-  private[effect] case class Eval[F[_], A](effect: F[PropF[F]])(implicit
+  def status[F[_]](status: Prop.Status)(implicit F: MonadError[F, Throwable]): PropF[F] =
+    Result(status, Nil, Set.empty, Set.empty)
+
+  def undecided[F[_]](implicit F: MonadError[F, Throwable]): PropF[F] =
+    status(Prop.Undecided)
+
+  def falsified[F[_]](implicit F: MonadError[F, Throwable]): PropF[F] =
+    status(Prop.False)
+
+  def proved[F[_]](implicit F: MonadError[F, Throwable]): PropF[F] =
+    status(Prop.Proof)
+
+  def passed[F[_]](implicit F: MonadError[F, Throwable]): PropF[F] =
+    status(Prop.True)
+
+  def exception[F[_]](t: Throwable)(implicit F: MonadError[F, Throwable]): PropF[F] =
+    status(Prop.Exception(t))
+
+  private[effect] case class Suspend[F[_], A](effect: F[PropF[F]])(implicit
       val F: MonadError[F, Throwable]
   ) extends PropF[F]
 
   implicit def effectOfPropFToPropF[F[_]](
       fa: F[PropF[F]]
   )(implicit F: MonadError[F, Throwable]): PropF[F] =
-    Eval[F, Result[F]](
+    Suspend[F, Result[F]](
       fa.handleError(t => Result[F](Prop.Exception(t), Nil, Set.empty, Set.empty))
     )
 
   implicit def effectOfUnitToPropF[F[_]](
       fu: F[Unit]
   )(implicit F: MonadError[F, Throwable]): PropF[F] =
-    Eval[F, Result[F]](
+    Suspend[F, Result[F]](
       fu.as(Result[F](Prop.True, Nil, Set.empty, Set.empty): PropF[F])
         .handleError(t => Result[F](Prop.Exception(t), Nil, Set.empty, Set.empty))
     )
@@ -529,7 +548,7 @@ object PropF {
       gr.retrieve match {
         case None => PropF.undecided
         case Some(x) =>
-          Eval(result(x).flatMap { r =>
+          Suspend(result(x).flatMap { r =>
             if (r.failure && prms.useLegacyShrinking) shrinker(x, r, 0, x)
             else F.pure(r.addArg(Prop.Arg(labels, x, 0, x, pp(x), pp(x))))
           })
