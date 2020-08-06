@@ -16,6 +16,8 @@ ThisBuild / githubWorkflowEnv ++= Map(
 ThisBuild / githubWorkflowTargetTags += "v*"
 ThisBuild / githubWorkflowPublish := Seq(WorkflowStep.Sbt(List("ci-release")))
 
+import com.jsuereth.sbtpgp.PgpKeys.gpgCommand
+Global / gpgCommand := (baseDirectory.value / "gpg.sh").getAbsolutePath
 
 lazy val root = project.in(file("."))
   .aggregate(core.jvm, core.js, munit.jvm, munit.js)
