@@ -140,7 +140,7 @@ object PropF {
       val F: MonadError[F, Throwable]
   ) extends PropF[F]
 
-  private[effect] case class Result[F[_]](
+  case class Result[F[_]](
       status: Prop.Status,
       args: List[Prop.Arg[Any]],
       collected: Set[Any],
