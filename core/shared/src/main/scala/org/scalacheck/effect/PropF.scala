@@ -14,19 +14,26 @@ sealed trait PropF[F[_]] {
   implicit val F: MonadError[F, Throwable]
 
   private[effect] def addArg(arg: Prop.Arg[Any]): PropF[F] =
-    mapResult(r => r.copy(args = arg :: r.args))
+    map(r => r.copy(args = arg :: r.args))
 
   private[effect] def provedToTrue: PropF[F] =
-    mapResult { r =>
+    map { r =>
       if (r.status == Prop.Proof) r.copy(status = Prop.True)
       else r
     }
 
-  private def mapResult(f: PropF.Result[F] => PropF.Result[F]): PropF[F] =
+  def map(f: PropF.Result[F] => PropF.Result[F]): PropF[F] =
     this match {
       case r: PropF.Result[F]     => f(r)
-      case PropF.Parameterized(g) => PropF.Parameterized(p => g(p).mapResult(f))
-      case PropF.Suspend(effect)  => PropF.Suspend(effect.map(_.mapResult(f)))
+      case PropF.Parameterized(g) => PropF.Parameterized(p => g(p).map(f))
+      case PropF.Suspend(effect)  => PropF.Suspend(effect.map(_.map(f)))
+    }
+
+  def flatMap(f: PropF.Result[F] => PropF[F]): PropF[F] =
+    this match {
+      case r: PropF.Result[F]     => f(r)
+      case PropF.Parameterized(g) => PropF.Parameterized(p => g(p).flatMap(f))
+      case PropF.Suspend(effect)  => PropF.Suspend(effect.map(_.flatMap(f)))
     }
 
   private def checkOne(params: Gen.Parameters): F[PropF.Result[F]] = {
@@ -98,10 +105,6 @@ object PropF {
       f: Gen.Parameters => PropF[F]
   )(implicit F: MonadError[F, Throwable]): PropF[F] = Parameterized(f)
 
-  def apply[F[_]](
-      b: Boolean
-  )(implicit F: MonadError[F, Throwable]): PropF[F] = if (b) passed else falsified
-
   private[effect] case class Parameterized[F[_]](f: Gen.Parameters => PropF[F])(implicit
       val F: MonadError[F, Throwable]
   ) extends PropF[F]
@@ -138,6 +141,10 @@ object PropF {
 
   def exception[F[_]](t: Throwable)(implicit F: MonadError[F, Throwable]): PropF[F] =
     status(Prop.Exception(t))
+
+  def boolean[F[_]](
+      b: Boolean
+  )(implicit F: MonadError[F, Throwable]): PropF[F] = if (b) passed else falsified
 
   private[effect] case class Suspend[F[_], A](effect: F[PropF[F]])(implicit
       val F: MonadError[F, Throwable]
