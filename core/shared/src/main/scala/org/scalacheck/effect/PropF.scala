@@ -1,3 +1,19 @@
+/*
+ * Copyright 2020 Typelevel
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.scalacheck.effect
 
 import scala.collection.immutable.Stream
@@ -6,9 +22,7 @@ import scala.collection.immutable.Stream.#::
 import cats.MonadError
 import cats.implicits._
 import org.scalacheck.{Arbitrary, Gen, Prop, Shrink, Test}
-import org.scalacheck.rng.Seed
 import org.scalacheck.util.{FreqMap, Pretty}
-import scala.collection.immutable.Stream.Cons
 
 /**
   * An effectful property.
@@ -202,7 +216,7 @@ object PropF {
           case None => PropF.undecided
         }
       } catch {
-        case e: Gen.RetrievalError => PropF.undecided
+        case _: Gen.RetrievalError => PropF.undecided
       }
     }
 
@@ -552,8 +566,8 @@ object PropF {
         if (xs.isEmpty) F.pure(res)
         else
           getFirstFailure(xs).flatMap {
-            case Right((x2, r2)) => F.pure(res)
-            case Left((x2, r2))  => shrinker(x2, replOrig(r, r2), shrinks + 1, orig)
+            case Right((_, _))  => F.pure(res)
+            case Left((x2, r2)) => shrinker(x2, replOrig(r, r2), shrinks + 1, orig)
           }
       }
 
