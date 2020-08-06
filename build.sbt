@@ -30,6 +30,11 @@ ThisBuild / githubWorkflowPublishPreamble +=
 
 ThisBuild / githubWorkflowPublish := Seq(WorkflowStep.Sbt(List("release")))
 
+ThisBuild / homepage := Some(url("https://github.com/typelevel/scalacheck-effect"))
+
+ThisBuild / scmInfo := Some(ScmInfo(url("https://github.com/typelevel/scalacheck-effect"),
+  "git@github.com:typelevel/scalacheck-effect.git"))
+
 lazy val root = project.in(file("."))
   .aggregate(core.jvm, core.js, munit.jvm, munit.js)
   .settings(noPublishSettings)
