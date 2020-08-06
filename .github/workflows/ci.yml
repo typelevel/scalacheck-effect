@@ -304,6 +304,6 @@ jobs:
           path: project/target
 
       - name: Import signing key
-        run: echo $PGP_SECRET | gpg --import
+        run: echo $PGP_SECRET | base64 -d | gpg --import
 
       - run: sbt ++${{ matrix.scala }} release

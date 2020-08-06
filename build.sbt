@@ -25,7 +25,7 @@ ThisBuild / githubWorkflowTargetTags += "v*"
 
 ThisBuild / githubWorkflowPublishPreamble +=
   WorkflowStep.Run(
-    List("echo $PGP_SECRET | gpg --import"),
+    List("echo $PGP_SECRET | base64 -d | gpg --import"),
     name = Some("Import signing key"))
 
 ThisBuild / githubWorkflowPublish := Seq(WorkflowStep.Sbt(List("release")))
