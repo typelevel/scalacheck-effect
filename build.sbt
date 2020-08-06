@@ -1,19 +1,20 @@
 import sbtcrossproject.CrossPlugin.autoImport.crossProject
 import sbtcrossproject.CrossPlugin.autoImport.CrossType
 
-crossScalaVersions in ThisBuild := List("2.12.11", "2.13.2", "0.25.0", "0.26.0-RC1")
+ThisBuild / crossScalaVersions := List("2.12.11", "2.13.2", "0.25.0", "0.26.0-RC1")
 
-githubWorkflowPublishTargetBranches in ThisBuild := Seq(
+ThisBuild / githubWorkflowPublishTargetBranches := Seq(
   RefPredicate.Equals(Ref.Branch("main")),
   RefPredicate.StartsWith(Ref.Tag("v"))
 )
-githubWorkflowEnv in ThisBuild ++= Map(
+ThisBuild / githubWorkflowEnv ++= Map(
   "SONATYPE_USERNAME" -> s"$${{ secrets.SONATYPE_USERNAME }}",
   "SONATYPE_PASSWORD" -> s"$${{ secrets.SONATYPE_PASSWORD }}",
   "PGP_SECRET" -> s"$${{ secrets.PGP_SECRET }}",
   "PGP_PASSPHRASE" -> s"$${{ secrets.PGP_PASSPHRASE }}"
 )
-githubWorkflowPublish in ThisBuild := Seq(WorkflowStep.Sbt(List("ci-release")))
+ThisBuild / githubWorkflowTargetTags += "v*"
+ThisBuild / githubWorkflowPublish := Seq(WorkflowStep.Sbt(List("ci-release")))
 
 
 lazy val root = project.in(file("."))
