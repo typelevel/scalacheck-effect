@@ -9,7 +9,7 @@ ThisBuild / organizationName := "Typelevel"
 ThisBuild / publishGithubUser := "mpilquist"
 ThisBuild / publishFullName := "Michael Pilquist"
 
-ThisBuild / crossScalaVersions := List("0.25.0", "0.26.0-RC1", "2.12.11", "2.13.2")
+ThisBuild / crossScalaVersions := List("0.26.0", "0.27.0-RC1", "2.12.11", "2.13.3")
 
 ThisBuild / githubWorkflowPublishTargetBranches := Seq(
   RefPredicate.Equals(Ref.Branch("main")),
@@ -74,4 +74,4 @@ lazy val munit = crossProject(JSPlatform, JVMPlatform).settings(commonSettings).
 ).dependsOn(core)
 .settings(dottyLibrarySettings)
 .settings(dottyJsSettings(ThisBuild / crossScalaVersions))
-.settings(libraryDependencies += "org.scalameta" %%% "munit-scalacheck" % "0.7.10")
+.settings(libraryDependencies += "org.scalameta" %%% "munit-scalacheck" % "0.7.12")
