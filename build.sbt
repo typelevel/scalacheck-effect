@@ -11,6 +11,10 @@ ThisBuild / publishFullName := "Michael Pilquist"
 
 ThisBuild / crossScalaVersions := List("0.26.0", "0.27.0-RC1", "2.12.11", "2.13.3")
 
+ThisBuild / versionIntroduced := Map(
+  "0.27.0-RC1" -> "0.1.99" // Disable for now due to bug in sbt-spiewak with RCs
+)
+
 ThisBuild / githubWorkflowPublishTargetBranches := Seq(
   RefPredicate.Equals(Ref.Branch("main")),
   RefPredicate.StartsWith(Ref.Tag("v"))
