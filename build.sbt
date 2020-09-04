@@ -59,7 +59,7 @@ lazy val core = crossProject(JSPlatform, JVMPlatform).settings(commonSettings).s
   name := "scalacheck-effect",
 
   libraryDependencies ++= List(
-    "org.typelevel"  %%% "cats-core" % "2.1.1",
+    "org.typelevel"  %%% "cats-core" % "2.2.0",
     "org.scalacheck" %% "scalacheck" % "1.14.3"),
 
   Compile / scalacOptions ~= { _.filterNot(_ == "-Xfatal-warnings") }   // we need to turn this off because scalacheck's API uses Stream, which is deprecated
