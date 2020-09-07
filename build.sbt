@@ -70,7 +70,7 @@ lazy val core = crossProject(JSPlatform, JVMPlatform).settings(commonSettings).s
 lazy val munit = crossProject(JSPlatform, JVMPlatform).settings(commonSettings).settings(
   name := "scalacheck-effect-munit",
 
-  libraryDependencies += "org.typelevel"  %%% "cats-effect" % "2.1.4" % Test,
+  libraryDependencies += "org.typelevel"  %%% "cats-effect" % "2.2.0" % Test,
 
   testFrameworks += new TestFramework("munit.Framework")
 ).jsSettings(
