@@ -2,6 +2,7 @@
 
 [![Continuous Integration](https://github.com/typelevel/scalacheck-effect/workflows/Continuous%20Integration/badge.svg)](https://github.com/typelevel/scalacheck-effect/actions?query=workflow%3A%22Continuous+Integration%22)
 [![Gitter Chat](https://badges.gitter.im/typelevel/general.svg)](https://gitter.im/typelevel/general)
+[![Latest version](https://index.scala-lang.org/typelevel/scalacheck-effect/scalacheck-effect/latest.svg?color=orange)](https://index.scala-lang.org/typelevel/scalacheck-effect/scalacheck-effect)
 
 
 ScalaCheck Effect is a library that extends the functionality of [ScalaCheck](https://scalacheck.org) to support "effectful" properties. An effectful property is one that evaluates each sample in some type constructor `F[_]`. For example:
