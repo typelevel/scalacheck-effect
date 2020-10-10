@@ -4,4 +4,3 @@ addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.4.2")
 addSbtPlugin("com.codecommit" % "sbt-spiewak-sonatype" % "0.15.2")
 addSbtPlugin("com.codecommit" % "sbt-github-actions" % "0.9.3")
 addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % "0.9.21")
-

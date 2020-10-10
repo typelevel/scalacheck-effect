@@ -24,8 +24,7 @@ import cats.implicits._
 import org.scalacheck.{Arbitrary, Gen, Prop, Shrink, Test}
 import org.scalacheck.util.{FreqMap, Pretty}
 
-/**
-  * An effectful property.
+/** An effectful property.
   *
   * Effectful properties are ones in which each sample evaluates in a type constructor.
   * That is, instead of directly computing a result from a single sample of generated values,

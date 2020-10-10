@@ -24,8 +24,7 @@ import org.scalacheck.effect.PropF
 import org.scalacheck.rng.Seed
 import org.scalacheck.util.Pretty
 
-/**
-  * Extends `ScalaCheckSuite`, adding support for evaluation of effectful properties (`PropF[F]` values).
+/** Extends `ScalaCheckSuite`, adding support for evaluation of effectful properties (`PropF[F]` values).
   *
   * This trait transforms tests which return `PropF[F]` values in to `F[Unit]` values. The `F[Unit]` values
   * are transformed to a `Future[Unit]` via `munitValueTransform`. Hence, an appropriate value transform
