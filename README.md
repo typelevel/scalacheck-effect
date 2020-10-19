@@ -32,6 +32,12 @@ This library provides the `org.scalacheck.effect.PropF` type, which is the effec
 
 The key idea here is using the `PropF.{forAllF, forAllNoShrinkF}` methods to create `PropF[F]` instances. The `check()` method on `PropF` converts a `PropF[F]` to a `F[Test.Result]`.
 
+## sbt dependency
+
+```scala
+libraryDependencies += "org.typelevel" %% "scalacheck-effect" % scalacheckEffectVersion
+```
+
 ## MUnit Integration
 
 This project also provides support for checking `PropF` values from within [MUnit](https://scalameta.org/munit/) based test suites.
