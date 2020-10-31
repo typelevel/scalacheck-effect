@@ -9,7 +9,7 @@ ThisBuild / organizationName := "Typelevel"
 ThisBuild / publishGithubUser := "mpilquist"
 ThisBuild / publishFullName := "Michael Pilquist"
 
-ThisBuild / crossScalaVersions := List("0.26.0", "0.27.0-RC1", "2.12.11", "2.13.3")
+ThisBuild / crossScalaVersions := List("0.27.0-RC1", "2.12.11", "2.13.3")
 
 ThisBuild / versionIntroduced := Map(
   "0.27.0-RC1" -> "0.1.99" // Disable for now due to bug in sbt-spiewak with RCs
@@ -64,8 +64,7 @@ lazy val core = crossProject(JSPlatform, JVMPlatform)
   .settings(
     name := "scalacheck-effect",
     libraryDependencies ++= List(
-      "org.typelevel" %%% "cats-core" % "2.2.0",
-      "org.scalacheck" %% "scalacheck" % "1.15.0"
+      "org.typelevel" %%% "cats-core" % "2.2.0"
     ),
     Compile / scalacOptions ~= {
       _.filterNot(_ == "-Xfatal-warnings")
@@ -73,6 +72,11 @@ lazy val core = crossProject(JSPlatform, JVMPlatform)
   )
   .settings(dottyLibrarySettings)
   .settings(dottyJsSettings(ThisBuild / crossScalaVersions))
+  .settings(
+    libraryDependencies ++= List(
+      "org.scalacheck" %% "scalacheck" % "1.15.0"
+    )
+  )
 
 lazy val munit = crossProject(JSPlatform, JVMPlatform)
   .settings(commonSettings)
@@ -87,4 +91,11 @@ lazy val munit = crossProject(JSPlatform, JVMPlatform)
   .dependsOn(core)
   .settings(dottyLibrarySettings)
   .settings(dottyJsSettings(ThisBuild / crossScalaVersions))
-  .settings(libraryDependencies += "org.scalameta" %%% "munit-scalacheck" % "0.7.14")
+  .settings(
+    libraryDependencies += "org.scalameta" %%% "munit" % "0.7.14",
+    libraryDependencies += {
+      if (isDotty.value)
+        "org.scalameta" %%% "munit-scalacheck" % "0.7.14" exclude ("org.scalacheck", "scalacheck_2.13")
+      else "org.scalameta" %%% "munit-scalacheck" % "0.7.14"
+    }
+  )
