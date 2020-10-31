@@ -65,7 +65,7 @@ lazy val core = crossProject(JSPlatform, JVMPlatform)
     name := "scalacheck-effect",
     libraryDependencies ++= List(
       "org.typelevel" %%% "cats-core" % "2.2.0",
-      "org.scalacheck" %% "scalacheck" % "1.14.3"
+      "org.scalacheck" %% "scalacheck" % "1.15.0"
     ),
     Compile / scalacOptions ~= {
       _.filterNot(_ == "-Xfatal-warnings")
