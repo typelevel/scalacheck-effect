@@ -27,7 +27,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        scala: [0.27.0-RC1, 2.12.11, 2.13.3]
+        scala: [0.27.0-RC1, 3.0.0-M1, 2.12.11, 2.13.3]
         java: [adopt@1.8]
     runs-on: ${{ matrix.os }}
     steps:
@@ -37,7 +37,7 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Java and Scala
-        uses: olafurpg/setup-scala@v5
+        uses: olafurpg/setup-scala@v10
         with:
           java-version: ${{ matrix.java }}
 
@@ -111,7 +111,7 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Java and Scala
-        uses: olafurpg/setup-scala@v5
+        uses: olafurpg/setup-scala@v10
         with:
           java-version: ${{ matrix.java }}
 
@@ -160,6 +160,16 @@ jobs:
           name: target-${{ matrix.os }}-0.27.0-RC1-${{ matrix.java }}
 
       - name: Inflate target directories (0.27.0-RC1)
+        run: |
+          tar xf targets.tar
+          rm targets.tar
+
+      - name: Download target directories (3.0.0-M1)
+        uses: actions/download-artifact@v2
+        with:
+          name: target-${{ matrix.os }}-3.0.0-M1-${{ matrix.java }}
+
+      - name: Inflate target directories (3.0.0-M1)
         run: |
           tar xf targets.tar
           rm targets.tar
