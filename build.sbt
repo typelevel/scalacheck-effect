@@ -9,10 +9,11 @@ ThisBuild / organizationName := "Typelevel"
 ThisBuild / publishGithubUser := "mpilquist"
 ThisBuild / publishFullName := "Michael Pilquist"
 
-ThisBuild / crossScalaVersions := List("0.27.0-RC1", "2.12.11", "2.13.3")
+ThisBuild / crossScalaVersions := List("0.27.0-RC1", "3.0.0-M1", "2.12.11", "2.13.3")
 
 ThisBuild / versionIntroduced := Map(
-  "0.27.0-RC1" -> "0.1.99" // Disable for now due to bug in sbt-spiewak with RCs
+  "0.27.0-RC1" -> "0.1.99", // Disable for now due to bug in sbt-spiewak with RCs
+  "3.0.0-M1" -> "0.1.99" // Disable for now due to bug in sbt-spiewak with RCs
 )
 
 ThisBuild / githubWorkflowPublishTargetBranches := Seq(
@@ -74,8 +75,11 @@ lazy val core = crossProject(JSPlatform, JVMPlatform)
   .settings(dottyJsSettings(ThisBuild / crossScalaVersions))
   .settings(
     libraryDependencies ++= List(
-      "org.scalacheck" %% "scalacheck" % "1.15.0"
+      "org.scalacheck" %%% "scalacheck" % "1.15.0"
     )
+  )
+  .jsSettings(
+    crossScalaVersions := crossScalaVersions.value.filter(_.startsWith("2."))
   )
 
 lazy val munit = crossProject(JSPlatform, JVMPlatform)
@@ -93,4 +97,7 @@ lazy val munit = crossProject(JSPlatform, JVMPlatform)
   .settings(dottyJsSettings(ThisBuild / crossScalaVersions))
   .settings(
     libraryDependencies += "org.scalameta" %%% "munit-scalacheck" % "0.7.16"
+  )
+  .jsSettings(
+    crossScalaVersions := crossScalaVersions.value.filter(_.startsWith("2."))
   )
