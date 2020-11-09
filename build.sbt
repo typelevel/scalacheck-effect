@@ -64,9 +64,6 @@ lazy val core = crossProject(JSPlatform, JVMPlatform)
   .settings(commonSettings)
   .settings(
     name := "scalacheck-effect",
-    libraryDependencies ++= List(
-      "org.typelevel" %%% "cats-core" % "2.2.0"
-    ),
     Compile / scalacOptions ~= {
       _.filterNot(_ == "-Xfatal-warnings")
     } // we need to turn this off because scalacheck's API uses Stream, which is deprecated
@@ -75,7 +72,8 @@ lazy val core = crossProject(JSPlatform, JVMPlatform)
   .settings(dottyJsSettings(ThisBuild / crossScalaVersions))
   .settings(
     libraryDependencies ++= List(
-      "org.scalacheck" %%% "scalacheck" % "1.15.1"
+      "org.scalacheck" %%% "scalacheck" % "1.15.1",
+      "org.typelevel" %%% "cats-core" % "2.3.0-M2"
     )
   )
   .jsSettings(
@@ -86,7 +84,6 @@ lazy val munit = crossProject(JSPlatform, JVMPlatform)
   .settings(commonSettings)
   .settings(
     name := "scalacheck-effect-munit",
-    libraryDependencies += "org.typelevel" %%% "cats-effect" % "2.2.0" % Test,
     testFrameworks += new TestFramework("munit.Framework")
   )
   .jsSettings(
@@ -96,7 +93,10 @@ lazy val munit = crossProject(JSPlatform, JVMPlatform)
   .settings(dottyLibrarySettings)
   .settings(dottyJsSettings(ThisBuild / crossScalaVersions))
   .settings(
-    libraryDependencies += "org.scalameta" %%% "munit-scalacheck" % "0.7.16"
+    libraryDependencies ++= List(
+      "org.scalameta" %%% "munit-scalacheck" % "0.7.16",
+      "org.typelevel" %%% "cats-effect" % "2.3.0-M1" % Test
+    )
   )
   .jsSettings(
     crossScalaVersions := crossScalaVersions.value.filter(_.startsWith("2."))
