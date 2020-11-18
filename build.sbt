@@ -94,7 +94,7 @@ lazy val munit = crossProject(JSPlatform, JVMPlatform)
   .settings(dottyJsSettings(ThisBuild / crossScalaVersions))
   .settings(
     libraryDependencies ++= List(
-      "org.scalameta" %%% "munit-scalacheck" % "0.7.17",
+      "org.scalameta" %%% "munit-scalacheck" % "0.7.18",
       "org.typelevel" %%% "cats-effect" % "2.3.0-M1" % Test
     )
   )
