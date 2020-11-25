@@ -20,6 +20,8 @@ ThisBuild / spiewakCiReleaseSnapshots := true
 
 ThisBuild / homepage := Some(url("https://github.com/typelevel/scalacheck-effect"))
 
+ThisBuild / licenses := List("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0"))
+
 ThisBuild / scmInfo := Some(
   ScmInfo(
     url("https://github.com/typelevel/scalacheck-effect"),
@@ -27,23 +29,14 @@ ThisBuild / scmInfo := Some(
   )
 )
 
+ThisBuild / scalafmtOnCompile := true
+
 lazy val root = project
   .in(file("."))
   .aggregate(core.jvm, core.js, munit.jvm, munit.js)
   .enablePlugins(NoPublishPlugin, SonatypeCiRelease)
 
-val commonSettings = Seq(
-  homepage := Some(url("https://github.com/typelevel/scalacheck-effect")),
-  licenses := List("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
-  libraryDependencies ++= {
-    if (isDotty.value) Nil
-    else Seq(scalafixSemanticdb)
-  },
-  scalafmtOnCompile := true
-)
-
 lazy val core = crossProject(JSPlatform, JVMPlatform)
-  .settings(commonSettings)
   .settings(
     name := "scalacheck-effect",
     Compile / scalacOptions ~= {
@@ -63,7 +56,6 @@ lazy val core = crossProject(JSPlatform, JVMPlatform)
   )
 
 lazy val munit = crossProject(JSPlatform, JVMPlatform)
-  .settings(commonSettings)
   .settings(
     name := "scalacheck-effect-munit",
     testFrameworks += new TestFramework("munit.Framework")
