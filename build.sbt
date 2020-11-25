@@ -9,32 +9,16 @@ ThisBuild / organizationName := "Typelevel"
 ThisBuild / publishGithubUser := "mpilquist"
 ThisBuild / publishFullName := "Michael Pilquist"
 
-ThisBuild / crossScalaVersions := List("3.0.0-M1", "2.12.11", "2.13.3")
+ThisBuild / crossScalaVersions := List("3.0.0-M2", "3.0.0-M1", "2.12.11", "2.13.3")
 
 ThisBuild / versionIntroduced := Map(
-  "0.27.0-RC1" -> "0.1.99", // Disable for now due to bug in sbt-spiewak with RCs
-  "3.0.0-M1" -> "0.1.99" // Disable for now due to bug in sbt-spiewak with RCs
+  "3.0.0-M1" -> "0.1.99", // Disable for now due to bug in sbt-spiewak with RCs
+  "3.0.0-M2" -> "0.1.99" // Disable for now due to bug in sbt-spiewak with RCs
 )
 
-ThisBuild / githubWorkflowPublishTargetBranches := Seq(
-  RefPredicate.Equals(Ref.Branch("main")),
-  RefPredicate.StartsWith(Ref.Tag("v"))
-)
-ThisBuild / githubWorkflowEnv ++= Map(
-  "SONATYPE_USERNAME" -> s"$${{ secrets.SONATYPE_USERNAME }}",
-  "SONATYPE_PASSWORD" -> s"$${{ secrets.SONATYPE_PASSWORD }}",
-  "PGP_SECRET" -> s"$${{ secrets.PGP_SECRET }}",
-  "PGP_PASSPHRASE" -> s"$${{ secrets.PGP_PASSPHRASE }}"
-)
-ThisBuild / githubWorkflowTargetTags += "v*"
+ThisBuild / spiewakCiReleaseSnapshots := true
 
-ThisBuild / githubWorkflowPublishPreamble +=
-  WorkflowStep.Run(
-    List("echo $PGP_SECRET | base64 -d | gpg --import"),
-    name = Some("Import signing key")
-  )
-
-ThisBuild / githubWorkflowPublish := Seq(WorkflowStep.Sbt(List("release")))
+ThisBuild / spiewakMainBranches := List("main")
 
 ThisBuild / homepage := Some(url("https://github.com/typelevel/scalacheck-effect"))
 
