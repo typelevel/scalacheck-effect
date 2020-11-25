@@ -16,25 +16,7 @@ ThisBuild / versionIntroduced := Map(
   "3.0.0-M1" -> "0.1.99" // Disable for now due to bug in sbt-spiewak with RCs
 )
 
-ThisBuild / githubWorkflowPublishTargetBranches := Seq(
-  RefPredicate.Equals(Ref.Branch("main")),
-  RefPredicate.StartsWith(Ref.Tag("v"))
-)
-ThisBuild / githubWorkflowEnv ++= Map(
-  "SONATYPE_USERNAME" -> s"$${{ secrets.SONATYPE_USERNAME }}",
-  "SONATYPE_PASSWORD" -> s"$${{ secrets.SONATYPE_PASSWORD }}",
-  "PGP_SECRET" -> s"$${{ secrets.PGP_SECRET }}",
-  "PGP_PASSPHRASE" -> s"$${{ secrets.PGP_PASSPHRASE }}"
-)
-ThisBuild / githubWorkflowTargetTags += "v*"
-
-ThisBuild / githubWorkflowPublishPreamble +=
-  WorkflowStep.Run(
-    List("echo $PGP_SECRET | base64 -d | gpg --import"),
-    name = Some("Import signing key")
-  )
-
-ThisBuild / githubWorkflowPublish := Seq(WorkflowStep.Sbt(List("release")))
+ThisBuild / spiewakCiReleaseSnapshots := true
 
 ThisBuild / homepage := Some(url("https://github.com/typelevel/scalacheck-effect"))
 
@@ -48,7 +30,7 @@ ThisBuild / scmInfo := Some(
 lazy val root = project
   .in(file("."))
   .aggregate(core.jvm, core.js, munit.jvm, munit.js)
-  .settings(noPublishSettings)
+  .enablePlugins(NoPublishPlugin, SonatypeCiRelease)
 
 val commonSettings = Seq(
   homepage := Some(url("https://github.com/typelevel/scalacheck-effect")),
