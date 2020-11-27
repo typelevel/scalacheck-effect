@@ -9,34 +9,22 @@ ThisBuild / organizationName := "Typelevel"
 ThisBuild / publishGithubUser := "mpilquist"
 ThisBuild / publishFullName := "Michael Pilquist"
 
-ThisBuild / crossScalaVersions := List("0.27.0-RC1", "3.0.0-M1", "2.12.11", "2.13.3")
+ThisBuild / crossScalaVersions := List("3.0.0-M2", "3.0.0-M1", "2.12.11", "2.13.3")
 
 ThisBuild / versionIntroduced := Map(
-  "0.27.0-RC1" -> "0.1.99", // Disable for now due to bug in sbt-spiewak with RCs
-  "3.0.0-M1" -> "0.1.99" // Disable for now due to bug in sbt-spiewak with RCs
+  "3.0.0-M1" -> "0.1.99", // Disable for now due to bug in sbt-spiewak with RCs
+  "3.0.0-M2" -> "0.1.99" // Disable for now due to bug in sbt-spiewak with RCs
 )
 
-ThisBuild / githubWorkflowPublishTargetBranches := Seq(
-  RefPredicate.Equals(Ref.Branch("main")),
-  RefPredicate.StartsWith(Ref.Tag("v"))
-)
-ThisBuild / githubWorkflowEnv ++= Map(
-  "SONATYPE_USERNAME" -> s"$${{ secrets.SONATYPE_USERNAME }}",
-  "SONATYPE_PASSWORD" -> s"$${{ secrets.SONATYPE_PASSWORD }}",
-  "PGP_SECRET" -> s"$${{ secrets.PGP_SECRET }}",
-  "PGP_PASSPHRASE" -> s"$${{ secrets.PGP_PASSPHRASE }}"
-)
-ThisBuild / githubWorkflowTargetTags += "v*"
+ThisBuild / spiewakCiReleaseSnapshots := true
 
-ThisBuild / githubWorkflowPublishPreamble +=
-  WorkflowStep.Run(
-    List("echo $PGP_SECRET | base64 -d | gpg --import"),
-    name = Some("Import signing key")
-  )
-
-ThisBuild / githubWorkflowPublish := Seq(WorkflowStep.Sbt(List("release")))
+ThisBuild / spiewakMainBranches := List("main")
 
 ThisBuild / homepage := Some(url("https://github.com/typelevel/scalacheck-effect"))
+
+ThisBuild / licenses := List("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0"))
+
+ThisBuild / scalafmtOnCompile := true
 
 ThisBuild / scmInfo := Some(
   ScmInfo(
@@ -48,40 +36,24 @@ ThisBuild / scmInfo := Some(
 lazy val root = project
   .in(file("."))
   .aggregate(core.jvm, core.js, munit.jvm, munit.js)
-  .settings(noPublishSettings)
-
-val commonSettings = Seq(
-  homepage := Some(url("https://github.com/typelevel/scalacheck-effect")),
-  licenses := List("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
-  libraryDependencies ++= {
-    if (isDotty.value) Nil
-    else Seq(scalafixSemanticdb)
-  },
-  scalafmtOnCompile := true
-)
+  .enablePlugins(NoPublishPlugin, SonatypeCiRelease)
 
 lazy val core = crossProject(JSPlatform, JVMPlatform)
-  .settings(commonSettings)
   .settings(
     name := "scalacheck-effect",
     Compile / scalacOptions ~= {
       _.filterNot(_ == "-Xfatal-warnings")
     } // we need to turn this off because scalacheck's API uses Stream, which is deprecated
   )
-  .settings(dottyLibrarySettings)
   .settings(dottyJsSettings(ThisBuild / crossScalaVersions))
   .settings(
     libraryDependencies ++= List(
       "org.scalacheck" %%% "scalacheck" % "1.15.1",
-      "org.typelevel" %%% "cats-core" % "2.3.0-M2"
+      "org.typelevel" %%% "cats-core" % "2.3.0"
     )
-  )
-  .jsSettings(
-    crossScalaVersions := crossScalaVersions.value.filter(_.startsWith("2."))
   )
 
 lazy val munit = crossProject(JSPlatform, JVMPlatform)
-  .settings(commonSettings)
   .settings(
     name := "scalacheck-effect-munit",
     testFrameworks += new TestFramework("munit.Framework")
@@ -90,14 +62,10 @@ lazy val munit = crossProject(JSPlatform, JVMPlatform)
     scalaJSLinkerConfig ~= (_.withModuleKind(ModuleKind.CommonJSModule))
   )
   .dependsOn(core)
-  .settings(dottyLibrarySettings)
   .settings(dottyJsSettings(ThisBuild / crossScalaVersions))
   .settings(
     libraryDependencies ++= List(
       "org.scalameta" %%% "munit-scalacheck" % "0.7.19",
-      "org.typelevel" %%% "cats-effect" % "2.3.0-M1" % Test
+      "org.typelevel" %%% "cats-effect" % "2.3.0" % Test
     )
-  )
-  .jsSettings(
-    crossScalaVersions := crossScalaVersions.value.filter(_.startsWith("2."))
   )
