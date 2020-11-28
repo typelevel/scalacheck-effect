@@ -46,7 +46,7 @@ This project also provides support for checking `PropF` values from within [MUni
 import munit.{CatsEffectSuite, ScalaCheckEffectSuite}
 import org.scalacheck.effect.PropF
 
-// Example assumes https://github.com/scalameta/munit/pull/134 is merged, which adds CatsEffectSuite to munit
+// Example uses https://github.com/typelevel/munit-cats-effect
 
 class ExampleSuite extends ScalaCheckEffectSuite with CatsEffectSuite {
   test("first PropF test") {
