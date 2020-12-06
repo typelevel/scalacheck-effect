@@ -36,7 +36,7 @@ ThisBuild / scmInfo := Some(
 lazy val root = project
   .in(file("."))
   .aggregate(core.jvm, core.js, munit.jvm, munit.js)
-  .enablePlugins(NoPublishPlugin, SonatypeCiRelease)
+  .enablePlugins(NoPublishPlugin, SonatypeCiReleasePlugin)
 
 lazy val core = crossProject(JSPlatform, JVMPlatform)
   .settings(
