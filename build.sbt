@@ -9,11 +9,11 @@ ThisBuild / organizationName := "Typelevel"
 ThisBuild / publishGithubUser := "mpilquist"
 ThisBuild / publishFullName := "Michael Pilquist"
 
-ThisBuild / crossScalaVersions := List("3.0.0-M2", "3.0.0-M1", "2.12.11", "2.13.3")
+ThisBuild / crossScalaVersions := List("3.0.0-M3", "3.0.0-M2", "2.12.11", "2.13.3")
 
 ThisBuild / versionIntroduced := Map(
-  "3.0.0-M1" -> "0.1.99", // Disable for now due to bug in sbt-spiewak with RCs
-  "3.0.0-M2" -> "0.1.99" // Disable for now due to bug in sbt-spiewak with RCs
+  "3.0.0-M2" -> "0.1.99", // Disable for now due to bug in sbt-spiewak with RCs
+  "3.0.0-M3" -> "0.1.99" // Disable for now due to bug in sbt-spiewak with RCs
 )
 
 ThisBuild / spiewakCiReleaseSnapshots := true
@@ -48,8 +48,8 @@ lazy val core = crossProject(JSPlatform, JVMPlatform)
   .settings(dottyJsSettings(ThisBuild / crossScalaVersions))
   .settings(
     libraryDependencies ++= List(
-      "org.scalacheck" %%% "scalacheck" % "1.15.1",
-      "org.typelevel" %%% "cats-core" % "2.3.0"
+      "org.scalacheck" %%% "scalacheck" % "1.15.2",
+      "org.typelevel" %%% "cats-core" % "2.3.1"
     )
   )
 
@@ -65,7 +65,7 @@ lazy val munit = crossProject(JSPlatform, JVMPlatform)
   .settings(dottyJsSettings(ThisBuild / crossScalaVersions))
   .settings(
     libraryDependencies ++= List(
-      "org.scalameta" %%% "munit-scalacheck" % "0.7.19",
-      "org.typelevel" %%% "cats-effect" % "2.3.0" % Test
+      "org.scalameta" %%% "munit-scalacheck" % "0.7.20",
+      "org.typelevel" %%% "cats-effect" % "2.3.1" % Test
     )
   )
