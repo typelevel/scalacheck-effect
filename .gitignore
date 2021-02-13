@@ -4,3 +4,4 @@ target
 .metals
 .bloop
 .bsp
+metals.sbt
