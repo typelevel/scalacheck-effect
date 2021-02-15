@@ -40,7 +40,11 @@ libraryDependencies += "org.typelevel" %% "scalacheck-effect" % scalacheckEffect
 
 ## MUnit Integration
 
-This project also provides support for checking `PropF` values from within [MUnit](https://scalameta.org/munit/) based test suites.
+This project also provides support for checking `PropF` values from within [MUnit](https://scalameta.org/munit/) based test suites. To use scalacheck-effect with munit, add the following dependency to your build:
+
+```scala
+libraryDependencies += "org.typelevel" %% "scalacheck-effect-munit" % scalacheckEffectVersion % Test
+```
 
 ```scala
 import munit.{CatsEffectSuite, ScalaCheckEffectSuite}
