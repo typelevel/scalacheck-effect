@@ -35,7 +35,7 @@ ThisBuild / scmInfo := Some(
 
 lazy val root = project
   .in(file("."))
-  .aggregate(core.jvm, core.js, munit.jvm, munit.js)
+  .aggregate(core.jvm, core.js, munit.jvm, munit.js, munitCE3.jvm, munitCE3.js)
   .enablePlugins(NoPublishPlugin, SonatypeCiReleasePlugin)
 
 lazy val core = crossProject(JSPlatform, JVMPlatform)
@@ -67,5 +67,22 @@ lazy val munit = crossProject(JSPlatform, JVMPlatform)
     libraryDependencies ++= List(
       "org.scalameta" %%% "munit-scalacheck" % "0.7.22",
       "org.typelevel" %%% "cats-effect" % "2.3.3" % Test
+    )
+  )
+
+lazy val munitCE3 = crossProject(JSPlatform, JVMPlatform)
+  .settings(
+    name := "scalacheck-effect-munit-ce3",
+    testFrameworks += new TestFramework("munit.Framework")
+  )
+  .jsSettings(
+    scalaJSLinkerConfig ~= (_.withModuleKind(ModuleKind.CommonJSModule))
+  )
+  .dependsOn(core)
+  .settings(dottyJsSettings(ThisBuild / crossScalaVersions))
+  .settings(
+    libraryDependencies ++= List(
+      "org.scalameta" %%% "munit-scalacheck" % "0.7.22",
+      "org.typelevel" %%% "cats-effect" % "3.0.0-RC2" % Test
     )
   )
