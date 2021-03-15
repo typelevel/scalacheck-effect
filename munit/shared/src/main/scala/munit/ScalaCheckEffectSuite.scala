@@ -16,8 +16,6 @@
 
 package munit
 
-import scala.concurrent.Future
-
 import cats.implicits._
 import org.scalacheck.Gen
 import org.scalacheck.effect.PropF
@@ -43,20 +41,14 @@ trait ScalaCheckEffectSuite extends ScalaCheckSuite {
       .withLegacyShrinking(scalaCheckTestParameters.useLegacyShrinking)
       .withInitialSeed(initialSeed)
 
-  override def munitTestTransforms: List[TestTransform] =
-    super.munitTestTransforms :+ scalaCheckPropFTransform
+  override def munitValueTransforms: List[ValueTransform] =
+    super.munitValueTransforms :+ scalaCheckPropFTransform
 
-  private val scalaCheckPropFTransform: TestTransform =
-    new TestTransform(
+  private val scalaCheckPropFTransform: ValueTransform =
+    new ValueTransform(
       "ScalaCheck PropF",
-      t => {
-        t.withBodyMap[TestValue](
-          _.flatMap {
-            case p: PropF[f] =>
-              super.munitValueTransform(checkPropF[f](p)(t.location))
-            case r => Future.successful(r)
-          }(munitExecutionContext)
-        )
+      { case p: PropF[f] =>
+        super.munitValueTransform(checkPropF[f](p))
       }
     )
 
