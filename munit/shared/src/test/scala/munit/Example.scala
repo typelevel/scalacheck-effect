@@ -19,6 +19,8 @@ package munit
 import cats.effect.IO
 import org.scalacheck.effect.PropF
 
+import java.util.concurrent.atomic.AtomicBoolean
+
 class Example extends ScalaCheckEffectSuite {
   override def munitValueTransforms: List[ValueTransform] =
     super.munitValueTransforms ++ List(munitIOTransform)
@@ -34,6 +36,19 @@ class Example extends ScalaCheckEffectSuite {
   test("two") {
     PropF.forAllF { (a: Int, b: Int) =>
       IO { assertEquals(a + b, b + a) }
+    }
+  }
+
+  val ready = new AtomicBoolean(false)
+
+  val fixture = FunFixture[Unit](
+    setup = { _ => ready.set(true) },
+    teardown = { _ => ready.set(false) }
+  )
+
+  fixture.test("fixture and forall") { _ =>
+    PropF.forAllF { (_: Int) =>
+      IO { assertEquals(ready.get(), true) }
     }
   }
 
