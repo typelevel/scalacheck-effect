@@ -42,9 +42,9 @@ trait ScalaCheckEffectSuite extends ScalaCheckSuite {
       .withInitialSeed(initialSeed)
 
   override def munitValueTransforms: List[ValueTransform] =
-    super.munitValueTransforms :+ scalaCheckPropFTransform
+    super.munitValueTransforms :+ scalaCheckPropFValueTransform
 
-  private val scalaCheckPropFTransform: ValueTransform =
+  private val scalaCheckPropFValueTransform: ValueTransform =
     new ValueTransform(
       "ScalaCheck PropF",
       { case p: PropF[f] =>
