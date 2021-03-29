@@ -17,6 +17,7 @@
 package munit
 
 import cats.effect.IO
+import cats.effect.unsafe.implicits.global
 import org.scalacheck.effect.PropF
 
 import java.util.concurrent.atomic.AtomicBoolean
