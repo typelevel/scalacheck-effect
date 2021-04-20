@@ -9,7 +9,7 @@ ThisBuild / organizationName := "Typelevel"
 ThisBuild / publishGithubUser := "mpilquist"
 ThisBuild / publishFullName := "Michael Pilquist"
 
-ThisBuild / crossScalaVersions := List("3.0.0-RC1", "3.0.0-RC2", "2.12.11", "2.13.3")
+ThisBuild / crossScalaVersions := List("3.0.0-RC2", "3.0.0-RC3", "2.12.11", "2.13.5")
 
 ThisBuild / spiewakCiReleaseSnapshots := true
 
@@ -44,7 +44,7 @@ lazy val core = crossProject(JSPlatform, JVMPlatform)
   .settings(
     libraryDependencies ++= List(
       "org.scalacheck" %%% "scalacheck" % "1.15.3",
-      "org.typelevel" %%% "cats-core" % "2.5.0"
+      "org.typelevel" %%% "cats-core" % "2.6.0"
     )
   )
 
@@ -60,7 +60,7 @@ lazy val munit = crossProject(JSPlatform, JVMPlatform)
   .settings(dottyJsSettings(ThisBuild / crossScalaVersions))
   .settings(
     libraryDependencies ++= List(
-      "org.scalameta" %%% "munit-scalacheck" % "0.7.23",
-      "org.typelevel" %%% "cats-effect" % "3.0.2" % Test
+      "org.scalameta" %%% "munit-scalacheck" % "0.7.25",
+      "org.typelevel" %%% "cats-effect" % "3.1.0" % Test
     )
   )
