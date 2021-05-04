@@ -43,7 +43,7 @@ lazy val core = crossProject(JSPlatform, JVMPlatform)
   .settings(dottyJsSettings(ThisBuild / crossScalaVersions))
   .settings(
     libraryDependencies ++= List(
-      "org.scalacheck" %%% "scalacheck" % "1.15.3",
+      "org.scalacheck" %%% "scalacheck" % "1.15.4",
       "org.typelevel" %%% "cats-core" % "2.6.0"
     )
   )
