@@ -1,6 +1,3 @@
-import sbtcrossproject.CrossPlugin.autoImport.crossProject
-import sbtcrossproject.CrossPlugin.autoImport.CrossType
-
 ThisBuild / baseVersion := "1.0"
 
 ThisBuild / organization := "org.typelevel"
@@ -9,7 +6,7 @@ ThisBuild / organizationName := "Typelevel"
 ThisBuild / publishGithubUser := "mpilquist"
 ThisBuild / publishFullName := "Michael Pilquist"
 
-ThisBuild / crossScalaVersions := List("3.0.0", "2.12.11", "2.13.6")
+ThisBuild / crossScalaVersions := List("3.0.0", "2.12.14", "2.13.5")
 
 ThisBuild / spiewakCiReleaseSnapshots := true
 
@@ -40,7 +37,6 @@ lazy val core = crossProject(JSPlatform, JVMPlatform)
       _.filterNot(_ == "-Xfatal-warnings")
     } // we need to turn this off because scalacheck's API uses Stream, which is deprecated
   )
-  .settings(dottyJsSettings(ThisBuild / crossScalaVersions))
   .settings(
     libraryDependencies ++= List(
       "org.scalacheck" %%% "scalacheck" % "1.15.4",
@@ -57,7 +53,6 @@ lazy val munit = crossProject(JSPlatform, JVMPlatform)
     scalaJSLinkerConfig ~= (_.withModuleKind(ModuleKind.CommonJSModule))
   )
   .dependsOn(core)
-  .settings(dottyJsSettings(ThisBuild / crossScalaVersions))
   .settings(
     libraryDependencies ++= List(
       "org.scalameta" %%% "munit-scalacheck" % "0.7.26",
