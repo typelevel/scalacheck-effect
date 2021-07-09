@@ -6,7 +6,7 @@ ThisBuild / organizationName := "Typelevel"
 ThisBuild / publishGithubUser := "mpilquist"
 ThisBuild / publishFullName := "Michael Pilquist"
 
-ThisBuild / crossScalaVersions := List("3.0.0", "2.12.14", "2.13.6")
+ThisBuild / crossScalaVersions := List("3.0.1", "2.12.14", "2.13.6")
 
 ThisBuild / spiewakCiReleaseSnapshots := true
 
