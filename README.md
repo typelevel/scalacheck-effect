@@ -52,7 +52,7 @@ import org.scalacheck.effect.PropF
 
 // Example uses https://github.com/typelevel/munit-cats-effect
 
-class ExampleSuite extends ScalaCheckEffectSuite with CatsEffectSuite {
+class ExampleSuite extends CatsEffectSuite with ScalaCheckEffectSuite {
   test("first PropF test") {
     PropF.forAllF { (x: Int) =>
       IO(x).start.flatMap(_.join).map(res => assert(res == x))
