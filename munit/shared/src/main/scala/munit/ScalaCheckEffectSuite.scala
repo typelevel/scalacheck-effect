@@ -64,7 +64,7 @@ trait ScalaCheckEffectSuite extends ScalaCheckSuite {
         val seedMessage = s"""|Failing seed: ${seed.toBase64}
                               |You can reproduce this failure by adding the following override to your suite:
                               |
-                              |  override val scalaCheckInitialSeed = "${seed.toBase64}"
+                              |  override def scalaCheckInitialSeed = "${seed.toBase64}"
                               |""".stripMargin
         fail(seedMessage + "\n" + Pretty.pretty(result, scalaCheckPrettyParameters))
       }
