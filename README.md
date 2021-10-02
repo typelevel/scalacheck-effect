@@ -16,7 +16,7 @@ object Example extends IOApp {
   def run(args: List[String]): IO[ExitCode] = {
     val p: PropF[IO] = 
       PropF.forAllF { (x: Int) =>
-        IO(x).start.flatMap(_.join).map(res => assert(res == x))
+        IO(x).map(res => assert(res == x))
       }
 
     val result: IO[Test.Result] = p.check()
