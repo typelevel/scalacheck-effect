@@ -77,7 +77,7 @@ sealed trait PropF[F[_]] {
   ): F[Test.Result] = {
 
     import testParams.{minSuccessfulTests, minSize, maxDiscardRatio, maxSize}
-    val sizeStep = (maxSize - minSize) / minSuccessfulTests
+    val sizeStep = (maxSize - minSize) / minSuccessfulTests.toDouble
     val maxDiscarded = minSuccessfulTests * maxDiscardRatio
 
     def loop(params: Gen.Parameters, passed: Int, discarded: Int): F[Test.Result] = {
@@ -86,7 +86,8 @@ sealed trait PropF[F[_]] {
       else if (discarded >= maxDiscarded)
         F.pure(Test.Result(Test.Exhausted, passed, discarded, FreqMap.empty))
       else {
-        val size = minSize.toDouble + sizeStep
+        val count = passed + discarded
+        val size = minSize.toDouble + (sizeStep * count)
         checkOne(params.withSize(size.round.toInt)).flatMap { result =>
           result.status match {
             case Prop.True =>
