@@ -10,7 +10,7 @@ lazy val root = tlCrossRootProject.aggregate(core, munit)
 lazy val core = crossProject(JSPlatform, JVMPlatform)
   .settings(
     name := "scalacheck-effect",
-    tlFatalWarnings := false,
+    tlFatalWarnings := false
   )
   .settings(
     libraryDependencies ++= List(
