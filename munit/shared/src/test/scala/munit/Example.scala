@@ -18,6 +18,7 @@ package munit
 
 import cats.effect.IO
 import cats.effect.unsafe.implicits.global
+import org.scalacheck.Test.Parameters
 import org.scalacheck.effect.PropF
 
 import java.util.concurrent.atomic.AtomicBoolean
@@ -38,6 +39,12 @@ class Example extends ScalaCheckEffectSuite {
     PropF.forAllF { (a: Int, b: Int) =>
       IO { assertEquals(a + b, b + a) }
     }
+  }
+
+  test("three") {
+    PropF.forAllF { (a: Int) =>
+      IO { assert( a == a + 1 )}
+    }.check(Parameters.default.withMinSuccessfulTests(1))
   }
 
   val ready = new AtomicBoolean(false)
