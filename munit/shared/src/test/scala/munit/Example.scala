@@ -44,7 +44,7 @@ class Example extends ScalaCheckEffectSuite {
   test("three") {
     PropF
       .forAllF { (a: Int) =>
-        IO { assert(a == a + 1) }
+        IO { assert(a == a) }
       }
       .check(Parameters.default.withMinSuccessfulTests(1))
   }
