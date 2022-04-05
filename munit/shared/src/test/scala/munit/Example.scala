@@ -42,9 +42,11 @@ class Example extends ScalaCheckEffectSuite {
   }
 
   test("three") {
-    PropF.forAllF { (a: Int) =>
-      IO { assert( a == a + 1 )}
-    }.check(Parameters.default.withMinSuccessfulTests(1))
+    PropF
+      .forAllF { (a: Int) =>
+        IO { assert(a == a + 1) }
+      }
+      .check(Parameters.default.withMinSuccessfulTests(1))
   }
 
   val ready = new AtomicBoolean(false)
