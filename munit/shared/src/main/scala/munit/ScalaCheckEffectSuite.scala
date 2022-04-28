@@ -23,10 +23,7 @@ import org.scalacheck.effect.PropF
 import org.scalacheck.rng.Seed
 import org.scalacheck.util.Pretty
 
-import java.lang.reflect.{
-  InvocationTargetException,
-  UndeclaredThrowableException
-}
+import java.lang.reflect.{InvocationTargetException, UndeclaredThrowableException}
 import scala.annotation.tailrec
 import scala.concurrent.ExecutionException
 
@@ -91,8 +88,7 @@ trait ScalaCheckEffectSuite extends ScalaCheckSuite {
   @tailrec
   private def rootCause(x: Throwable): Throwable = x match {
     case _: InvocationTargetException | _: ExceptionInInitializerError |
-        _: UndeclaredThrowableException | _: ExecutionException
-        if x.getCause != null =>
+        _: UndeclaredThrowableException | _: ExecutionException if x.getCause != null =>
       rootCause(x.getCause)
     case _ => x
   }
