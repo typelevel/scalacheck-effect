@@ -47,21 +47,23 @@ trait ScalaCheckEffectSuite extends ScalaCheckSuite {
       .withLegacyShrinking(scalaCheckTestParameters.useLegacyShrinking)
       .withInitialSeed(initialSeed)
 
-  override def munitValueTransforms: List[ValueTransform] =
-    super.munitValueTransforms :+ scalaCheckPropFValueTransform :+ scalaCheckTestResultTransform
+  override def munitValueTransforms: List[ValueTransform] = {
+    val testResultTransform =
+      new ValueTransform(
+        "ScalaCheck TestResult",
+        { case p: Test.Result =>
+          super.munitValueTransform(parseTestResult(p))
+        }
+      )
+
+    super.munitValueTransforms :+ scalaCheckPropFValueTransform :+ testResultTransform
+  }
 
   private val scalaCheckPropFValueTransform: ValueTransform =
     new ValueTransform(
       "ScalaCheck PropF",
       { case p: PropF[f] =>
         super.munitValueTransform(checkPropF[f](p))
-      }
-    )
-  private val scalaCheckTestResultTransform: ValueTransform =
-    new ValueTransform(
-      "ScalaCheck TestResult",
-      { case p: Test.Result =>
-        super.munitValueTransform(parseTestResult(p))
       }
     )
 
@@ -101,3 +103,5 @@ trait ScalaCheckEffectSuite extends ScalaCheckSuite {
   }
 
 }
+
+object ScalaCheckEffectSuite {}
