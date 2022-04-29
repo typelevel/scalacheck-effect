@@ -47,8 +47,17 @@ trait ScalaCheckEffectSuite extends ScalaCheckSuite {
       .withLegacyShrinking(scalaCheckTestParameters.useLegacyShrinking)
       .withInitialSeed(initialSeed)
 
-  override def munitValueTransforms: List[ValueTransform] =
-    super.munitValueTransforms :+ scalaCheckPropFValueTransform
+  override def munitValueTransforms: List[ValueTransform] = {
+    val testResultTransform =
+      new ValueTransform(
+        "ScalaCheck TestResult",
+        { case p: Test.Result =>
+          super.munitValueTransform(parseTestResult(p))
+        }
+      )
+
+    super.munitValueTransforms :+ scalaCheckPropFValueTransform :+ testResultTransform
+  }
 
   private val scalaCheckPropFValueTransform: ValueTransform =
     new ValueTransform(
@@ -58,21 +67,21 @@ trait ScalaCheckEffectSuite extends ScalaCheckSuite {
       }
     )
 
-  private def checkPropF[F[_]](
-      prop: PropF[F]
-  )(implicit loc: Location): F[Unit] = {
+  private def checkPropF[F[_]](prop: PropF[F])(implicit loc: Location): F[Unit] = {
     import prop.F
-    prop.check(scalaCheckTestParameters, genParameters).map(fixResultException).flatMap { result =>
-      if (result.passed) F.unit
-      else {
-        val seed = genParameters.initialSeed.get
-        val seedMessage = s"""|Failing seed: ${seed.toBase64}
-                              |You can reproduce this failure by adding the following override to your suite:
-                              |
-                              |  override def scalaCheckInitialSeed = "${seed.toBase64}"
-                              |""".stripMargin
-        fail(seedMessage + "\n" + Pretty.pretty(result, scalaCheckPrettyParameters))
-      }
+    prop.check(scalaCheckTestParameters, genParameters).map(fixResultException).map(parseTestResult)
+  }
+
+  private def parseTestResult(result: Test.Result)(implicit loc: Location): Unit = {
+    if (!result.passed) {
+      val seed = genParameters.initialSeed.get
+      val seedMessage =
+        s"""|Failing seed: ${seed.toBase64}
+            |You can reproduce this failure by adding the following override to your suite:
+            |
+            |  override def scalaCheckInitialSeed = "${seed.toBase64}"
+            |""".stripMargin
+      fail(seedMessage + "\n" + Pretty.pretty(result, scalaCheckPrettyParameters))
     }
   }
 
@@ -94,3 +103,5 @@ trait ScalaCheckEffectSuite extends ScalaCheckSuite {
   }
 
 }
+
+object ScalaCheckEffectSuite {}
