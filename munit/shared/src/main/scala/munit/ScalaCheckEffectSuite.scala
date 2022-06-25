@@ -96,8 +96,8 @@ trait ScalaCheckEffectSuite extends ScalaCheckSuite {
   // https://github.com/scalameta/munit/blob/68c2d13868baec9a77384f11f97505ecc0ce3eba/munit/shared/src/main/scala/munit/MUnitRunner.scala#L318-L326
   @tailrec
   private def rootCause(x: Throwable): Throwable = x match {
-    case _: InvocationTargetException | _: ExceptionInInitializerError |
-        _: UndeclaredThrowableException | _: ExecutionException if x.getCause != null =>
+    // should also include InvocationTargetException and UndeclaredThrowableException, but not on SJS
+    case _: ExceptionInInitializerError | _: ExecutionException if x.getCause != null =>
       rootCause(x.getCause)
     case _ => x
   }
