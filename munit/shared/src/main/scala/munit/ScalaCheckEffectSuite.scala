@@ -17,7 +17,7 @@
 package munit
 
 import cats.implicits._
-import org.scalacheck.{Gen, Test}
+import org.scalacheck.{Gen, Test => ScalaCheckTest}
 import org.scalacheck.Test.PropException
 import org.scalacheck.effect.PropF
 import org.scalacheck.rng.Seed
@@ -51,7 +51,7 @@ trait ScalaCheckEffectSuite extends ScalaCheckSuite {
     val testResultTransform =
       new ValueTransform(
         "ScalaCheck TestResult",
-        { case p: Test.Result =>
+        { case p: ScalaCheckTest.Result =>
           super.munitValueTransform(parseTestResult(p))
         }
       )
@@ -72,7 +72,7 @@ trait ScalaCheckEffectSuite extends ScalaCheckSuite {
     prop.check(scalaCheckTestParameters, genParameters).map(fixResultException).map(parseTestResult)
   }
 
-  private def parseTestResult(result: Test.Result)(implicit loc: Location): Unit = {
+  private def parseTestResult(result: ScalaCheckTest.Result)(implicit loc: Location): Unit = {
     if (!result.passed) {
       val seed = genParameters.initialSeed.get
       val seedMessage =
@@ -85,7 +85,7 @@ trait ScalaCheckEffectSuite extends ScalaCheckSuite {
     }
   }
 
-  private def fixResultException(result: Test.Result): Test.Result =
+  private def fixResultException(result: ScalaCheckTest.Result): ScalaCheckTest.Result =
     result.copy(
       status = result.status match {
         case p @ PropException(_, e, _) => p.copy(e = rootCause(e))
