@@ -23,7 +23,6 @@ import org.scalacheck.effect.PropF
 import org.scalacheck.rng.Seed
 import org.scalacheck.util.Pretty
 
-import java.lang.reflect.{InvocationTargetException, UndeclaredThrowableException}
 import scala.annotation.tailrec
 import scala.concurrent.ExecutionException
 
