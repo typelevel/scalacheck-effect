@@ -23,9 +23,6 @@ import org.scalacheck.effect.PropF
 import org.scalacheck.rng.Seed
 import org.scalacheck.util.Pretty
 
-import scala.annotation.tailrec
-import scala.concurrent.ExecutionException
-
 /** Extends `ScalaCheckSuite`, adding support for evaluation of effectful properties (`PropF[F]`
   * values).
   *
@@ -87,19 +84,10 @@ trait ScalaCheckEffectSuite extends ScalaCheckSuite {
   private def fixResultException(result: ScalaCheckTest.Result): ScalaCheckTest.Result =
     result.copy(
       status = result.status match {
-        case p @ PropException(_, e, _) => p.copy(e = rootCause(e))
+        case p @ PropException(_, e, _) => p.copy(e = Exceptions.rootCause(e))
         case default                    => default
       }
     )
-
-  // https://github.com/scalameta/munit/blob/68c2d13868baec9a77384f11f97505ecc0ce3eba/munit/shared/src/main/scala/munit/MUnitRunner.scala#L318-L326
-  @tailrec
-  private def rootCause(x: Throwable): Throwable = x match {
-    // should also include InvocationTargetException and UndeclaredThrowableException, but not on SJS
-    case _: ExceptionInInitializerError | _: ExecutionException if x.getCause != null =>
-      rootCause(x.getCause)
-    case _ => x
-  }
 
 }
 
