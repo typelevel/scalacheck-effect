@@ -17,15 +17,11 @@
 package munit
 
 import cats.implicits._
-import org.scalacheck.{Gen, Test}
+import org.scalacheck.{Gen, Test => ScalaCheckTest}
 import org.scalacheck.Test.PropException
 import org.scalacheck.effect.PropF
 import org.scalacheck.rng.Seed
 import org.scalacheck.util.Pretty
-
-import java.lang.reflect.{InvocationTargetException, UndeclaredThrowableException}
-import scala.annotation.tailrec
-import scala.concurrent.ExecutionException
 
 /** Extends `ScalaCheckSuite`, adding support for evaluation of effectful properties (`PropF[F]`
   * values).
@@ -51,7 +47,7 @@ trait ScalaCheckEffectSuite extends ScalaCheckSuite {
     val testResultTransform =
       new ValueTransform(
         "ScalaCheck TestResult",
-        { case p: Test.Result =>
+        { case p: ScalaCheckTest.Result =>
           super.munitValueTransform(parseTestResult(p))
         }
       )
@@ -72,7 +68,7 @@ trait ScalaCheckEffectSuite extends ScalaCheckSuite {
     prop.check(scalaCheckTestParameters, genParameters).map(fixResultException).map(parseTestResult)
   }
 
-  private def parseTestResult(result: Test.Result)(implicit loc: Location): Unit = {
+  private def parseTestResult(result: ScalaCheckTest.Result)(implicit loc: Location): Unit = {
     if (!result.passed) {
       val seed = genParameters.initialSeed.get
       val seedMessage =
@@ -85,22 +81,13 @@ trait ScalaCheckEffectSuite extends ScalaCheckSuite {
     }
   }
 
-  private def fixResultException(result: Test.Result): Test.Result =
+  private def fixResultException(result: ScalaCheckTest.Result): ScalaCheckTest.Result =
     result.copy(
       status = result.status match {
-        case p @ PropException(_, e, _) => p.copy(e = rootCause(e))
+        case p @ PropException(_, e, _) => p.copy(e = Exceptions.rootCause(e))
         case default                    => default
       }
     )
-
-  // https://github.com/scalameta/munit/blob/68c2d13868baec9a77384f11f97505ecc0ce3eba/munit/shared/src/main/scala/munit/MUnitRunner.scala#L318-L326
-  @tailrec
-  private def rootCause(x: Throwable): Throwable = x match {
-    case _: InvocationTargetException | _: ExceptionInInitializerError |
-        _: UndeclaredThrowableException | _: ExecutionException if x.getCause != null =>
-      rootCause(x.getCause)
-    case _ => x
-  }
 
 }
 

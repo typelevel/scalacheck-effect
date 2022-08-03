@@ -1,4 +1,4 @@
-ThisBuild / tlBaseVersion := "1.0"
+ThisBuild / tlBaseVersion := "2.0"
 
 ThisBuild / developers += tlGitHubDev("mpilquist", "Michael Pilquist")
 ThisBuild / startYear := Some(2021)
@@ -28,7 +28,7 @@ lazy val munit = crossProject(JSPlatform, JVMPlatform)
   .dependsOn(core)
   .settings(
     libraryDependencies ++= List(
-      "org.scalameta" %%% "munit-scalacheck" % "0.7.29",
+      "org.scalameta" %%% "munit-scalacheck" % "1.0.0-M6",
       "org.typelevel" %%% "cats-effect" % "3.3.14" % Test
     )
   )
