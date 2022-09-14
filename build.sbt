@@ -8,7 +8,7 @@ ThisBuild / tlVersionIntroduced := Map("3" -> "1.0.2")
 
 lazy val root = tlCrossRootProject.aggregate(core, munit)
 
-lazy val core = crossProject(JSPlatform, JVMPlatform)
+lazy val core = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .settings(
     name := "scalacheck-effect",
     tlFatalWarnings := false
@@ -20,7 +20,7 @@ lazy val core = crossProject(JSPlatform, JVMPlatform)
     )
   )
 
-lazy val munit = crossProject(JSPlatform, JVMPlatform)
+lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .settings(
     name := "scalacheck-effect-munit",
     testFrameworks += new TestFramework("munit.Framework")
