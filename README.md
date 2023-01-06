@@ -76,6 +76,13 @@ class ExampleSuite extends CatsEffectSuite with ScalaCheckEffectSuite {
 
 Calling `Await.result`, `unsafeRunSync()` or a similar blocking operation is not possible on Scala.js.
 
+### How to override the default scala check test parameter?
+By overriding the `scalaCheckTestParameters` from the super `ScalaCheckSuite`:
+
+E.g :`override def scalaCheckTestParameters =
+super.scalaCheckTestParameters
+.withMinSuccessfulTests(20)`
+
 ## Acknowledgements
 
 This library builds heavily on the ideas in ScalaCheck. It grew out of the FS2 [`AsyncPropertySuite`](https://github.com/functional-streams-for-scala/fs2/blob/48f7188ef2df959189f931a7bbb68df4cb81c82a/core/shared/src/test/scala/fs2/AsyncPropertySuite.scala), which only implemented a handful of features. The [Weaver Test](https://disneystreaming.github.io/weaver-test/) framework also has similar support for effectful properties. Finally, the [Scala Hedgehog](https://github.com/hedgehogqa/scala-hedgehog/) library has a [prototype of similar functionality](https://github.com/hedgehogqa/scala-hedgehog/pull/147).
