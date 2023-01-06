@@ -76,12 +76,14 @@ class ExampleSuite extends CatsEffectSuite with ScalaCheckEffectSuite {
 
 Calling `Await.result`, `unsafeRunSync()` or a similar blocking operation is not possible on Scala.js.
 
-### How to override the default scala check test parameter?
-By overriding the `scalaCheckTestParameters` from the super `ScalaCheckSuite`:
+### How to override the default ScalaCheck test parameters?
 
-E.g :`override def scalaCheckTestParameters =
-super.scalaCheckTestParameters
-.withMinSuccessfulTests(20)`
+By overriding the `scalaCheckTestParameters` from the super `ScalaCheckSuite`.
+
+```scala
+override def scalaCheckTestParameters =
+  super.scalaCheckTestParameters.withMinSuccessfulTests(20)
+```
 
 ## Acknowledgements
 
