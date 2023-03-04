@@ -1,7 +1,7 @@
 # ScalaCheck Effect
 
 [![Continuous Integration](https://github.com/typelevel/scalacheck-effect/workflows/Continuous%20Integration/badge.svg)](https://github.com/typelevel/scalacheck-effect/actions?query=workflow%3A%22Continuous+Integration%22)
-[![Gitter Chat](https://badges.gitter.im/typelevel/general.svg)](https://gitter.im/typelevel/general)
+[![Discord](https://img.shields.io/discord/632277896739946517.svg?label=&logo=discord&logoColor=ffffff&color=404244&labelColor=6A7EC2)](https://discord.gg/XF3CXcMzqD)
 [![Latest version](https://index.scala-lang.org/typelevel/scalacheck-effect/scalacheck-effect/latest.svg?color=orange)](https://index.scala-lang.org/typelevel/scalacheck-effect/scalacheck-effect)
 
 
