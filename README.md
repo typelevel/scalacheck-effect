@@ -45,6 +45,7 @@ This project also provides support for checking `PropF` values from within [MUni
 ```scala
 libraryDependencies += "org.typelevel" %% "scalacheck-effect-munit" % scalacheckEffectVersion % Test
 ```
+The following usage example is for Cats Effect 2:
 
 ```scala
 import munit.{CatsEffectSuite, ScalaCheckEffectSuite}
@@ -60,6 +61,17 @@ class ExampleSuite extends CatsEffectSuite with ScalaCheckEffectSuite {
   }
 }
 ```
+
+For Cats Effect 3, the `join` becomes `joinWithNever`, so the `PropF` in the above example becomes:
+
+```scala
+PropF.forAllF { (x: Int) =>
+  IO(x).start.flatMap(_.joinWithNever).map(res => assert(res == x))
+}
+```
+
+For more details on the differences between Cats Effect 2 and 3 see
+[the Cats Effect 3.x Migration Guide](https://typelevel.org/cats-effect/docs/migration-guide#exitcase-fiber).
 
 ## Design Goals
 
