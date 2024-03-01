@@ -3,7 +3,7 @@ ThisBuild / tlBaseVersion := "2.0"
 ThisBuild / developers += tlGitHubDev("mpilquist", "Michael Pilquist")
 ThisBuild / startYear := Some(2021)
 
-ThisBuild / crossScalaVersions := List("3.2.2", "2.12.17", "2.13.10")
+ThisBuild / crossScalaVersions := List("3.3.3", "2.12.17", "2.13.10")
 ThisBuild / tlVersionIntroduced := Map("3" -> "1.0.2")
 
 lazy val root = tlCrossRootProject.aggregate(core, munit)
@@ -16,7 +16,7 @@ lazy val core = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .settings(
     libraryDependencies ++= List(
       "org.scalacheck" %%% "scalacheck" % "1.17.0",
-      "org.typelevel" %%% "cats-core" % "2.9.0"
+      "org.typelevel" %%% "cats-core" % "2.10.0"
     )
   )
 
