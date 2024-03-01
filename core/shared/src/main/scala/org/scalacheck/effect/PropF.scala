@@ -66,7 +66,7 @@ sealed trait PropF[F[_]] {
           next.checkOne(Prop.slideSeed(params))
         }
       case PropF.Parameterized(next) =>
-        next(params).checkOne(Prop.slideSeed(params))
+        next(Prop.slideSeed(params)).checkOne(Prop.slideSeed(params))
     }
   }
 
