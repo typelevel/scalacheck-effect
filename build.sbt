@@ -15,7 +15,7 @@ lazy val core = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   )
   .settings(
     libraryDependencies ++= List(
-      "org.scalacheck" %%% "scalacheck" % "1.17.0",
+      "org.scalacheck" %%% "scalacheck" % "1.17.1",
       "org.typelevel" %%% "cats-core" % "2.10.0"
     )
   )
