@@ -35,6 +35,10 @@ class Example extends ScalaCheckEffectSuite {
     PropF.forAllNoShrinkF { (a: Int) => IO(assert(a == a)) }
   }
 
+  test("one-alt") {
+    PropF.forAllNoShrinkF { (a: Int) => IO(a == a) }
+  }
+
   test("two") {
     PropF.forAllF { (a: Int, b: Int) =>
       IO { assertEquals(a + b, b + a) }

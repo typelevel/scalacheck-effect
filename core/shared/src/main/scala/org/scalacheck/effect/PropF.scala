@@ -197,6 +197,11 @@ object PropF {
         .handleError(t => Result[F](Prop.Exception(t), Nil, Set.empty, Set.empty))
     )
 
+  implicit def effectOfBooleanToPropF[F[_]](
+      fb: F[Boolean]
+  )(implicit F: MonadError[F, Throwable]): PropF[F] =
+    effectOfPropFToPropF(F.map(fb)(boolean(_)))
+
   def forAllNoShrinkF[F[_], T1, P](
       g1: Gen[T1]
   )(
