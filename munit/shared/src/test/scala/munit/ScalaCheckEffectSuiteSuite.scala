@@ -19,7 +19,7 @@ package munit
 import cats.effect.IO
 import cats.effect.unsafe.implicits.global
 import org.scalacheck.effect.PropF
-import org.scalacheck.Shrink
+import org.scalacheck.{Arbitrary, Gen, Shrink}
 
 // Who tests the tests?
 class ScalaCheckEffectSuiteSuite extends ScalaCheckEffectSuite {
@@ -34,6 +34,10 @@ class ScalaCheckEffectSuiteSuite extends ScalaCheckEffectSuite {
     new ValueTransform("IO", { case e: IO[_] => e.unsafeToFuture() })
 
   test("Correctly slides seed for multi-arg PropF") {
+    implicit val arbForInt: Arbitrary[Int] = Arbitrary(
+      Gen.choose(0, Int.MaxValue)
+    )
+
     var last: Option[Int] = None
     var duplicates = 0
 
