@@ -6,7 +6,7 @@ ThisBuild / startYear := Some(2021)
 ThisBuild / crossScalaVersions := List("3.3.3", "2.12.19", "2.13.14")
 ThisBuild / tlVersionIntroduced := Map("3" -> "1.0.2")
 
-lazy val root = tlCrossRootProject.aggregate(core, munit)
+lazy val root = tlCrossRootProject.aggregate(core, `cats-effect`, munit)
 
 lazy val core = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .settings(
@@ -19,6 +19,15 @@ lazy val core = crossProject(JSPlatform, JVMPlatform, NativePlatform)
       "org.typelevel" %%% "cats-core" % "2.11.0"
     )
   )
+
+lazy val `cats-effect` = crossProject(JSPlatform, JVMPlatform, NativePlatform)
+  .settings(
+    name := "scalacheck-cats-effect",
+    libraryDependencies ++= List(
+      "org.typelevel" %%% "cats-effect" % "3.5.4"
+    )
+  )
+  .dependsOn(core)
 
 lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .settings(
