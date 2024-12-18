@@ -17,12 +17,11 @@
 package org.scalacheck.effect
 
 import scala.collection.immutable.Stream
-import scala.collection.immutable.Stream.#::
-
 import cats.MonadError
-import cats.implicits._
+import cats.syntax.all.*
 import org.scalacheck.{Arbitrary, Gen, Prop, Shrink, Test}
 import org.scalacheck.util.{FreqMap, Pretty}
+import org.typelevel.scalaccompat.annotation.*
 
 /** An effectful property.
   *
@@ -527,6 +526,8 @@ object PropF {
       a8.arbitrary
     )(f)
 
+  @nowarn213("""msg=(?:class|object) Stream in package (?:scala\.collection\.)?immutable is deprecated \(since 2.13.0\): Use LazyList \(which is fully lazy\) instead of Stream \(which has a lazy tail only\)""")
+  @nowarn3("""msg=(?:class|object) Stream in package (?:scala\.collection\.)?immutable is deprecated since 2\.13\.0: Use LazyList \(which is fully lazy\) instead of Stream \(which has a lazy tail only\)""")
   def forAllShrinkF[F[_], T, P](
       gen: Gen[T],
       shrink: T => Stream[T]
@@ -538,6 +539,8 @@ object PropF {
       pp: T => Pretty
   ): PropF[F] =
     PropF[F] { prms0 =>
+      import scala.collection.immutable.Stream.#::
+
       val (prms, seed) = Prop.startSeed(prms0)
       val gr = gen.doApply(prms, seed)
       val labels = gr.labels.mkString(",")

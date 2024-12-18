@@ -10,7 +10,6 @@ lazy val root = tlCrossRootProject.aggregate(core, munit)
 lazy val core = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .settings(
     name := "scalacheck-effect",
-    tlFatalWarnings := false,
     tlVersionIntroduced := Map("3" -> "1.0.2"),
     libraryDependencies ++= List(
       "org.scalacheck" %%% "scalacheck" % "1.17.1",
@@ -21,8 +20,8 @@ lazy val core = crossProject(JSPlatform, JVMPlatform, NativePlatform)
 lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .settings(
     name := "scalacheck-effect-munit",
-    tlFatalWarnings := false,
     testFrameworks += new TestFramework("munit.Framework"),
+    tlVersionIntroduced := Map("3" -> "1.0.2"),
     libraryDependencies ++= List(
       "org.scalameta" %%% "munit-scalacheck" % "1.0.0-M11",
       "org.typelevel" %%% "cats-effect" % "3.5.7" % Test
@@ -33,7 +32,6 @@ lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform)
 lazy val specs2 = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .settings(
     name := "scalacheck-effect-specs2",
-    tlFatalWarnings := false,
     tlVersionIntroduced := Map("3" -> "2.0.0-M3", "2.13" -> "2.0.0-M3", "2.12" -> "2.0.0-M3"),
     startYear := Some(2024),
     libraryDependencies ++= List(
