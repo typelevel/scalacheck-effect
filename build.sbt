@@ -29,6 +29,6 @@ lazy val munit = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .settings(
     libraryDependencies ++= List(
       "org.scalameta" %%% "munit-scalacheck" % "1.0.0-M11",
-      "org.typelevel" %%% "cats-effect" % "3.6.1" % Test
+      "org.typelevel" %%% "cats-effect" % "3.6.3" % Test
     )
   )
