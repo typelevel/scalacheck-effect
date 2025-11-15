@@ -590,7 +590,7 @@ object PropF {
         }
 
       gr.retrieve match {
-        case None => PropF.undecided
+        case None    => PropF.undecided
         case Some(x) =>
           Suspend(result(x).flatMap { r =>
             if (r.failure && prms.useLegacyShrinking) shrinker(x, r, 0, x)
