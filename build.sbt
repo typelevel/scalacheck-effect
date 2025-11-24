@@ -3,7 +3,7 @@ ThisBuild / tlBaseVersion := "2.0"
 ThisBuild / developers += tlGitHubDev("mpilquist", "Michael Pilquist")
 ThisBuild / startYear := Some(2021)
 
-ThisBuild / crossScalaVersions := List("3.3.7", "2.12.20", "2.13.17")
+ThisBuild / crossScalaVersions := List("3.3.7", "2.12.20", "2.13.18")
 ThisBuild / tlVersionIntroduced := Map("3" -> "1.0.2")
 
 ThisBuild / libraryDependencySchemes +=
